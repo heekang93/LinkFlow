@@ -6,9 +6,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>calendarModal</title>
-<!-- 지도 api -->
-<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=dffz3x1msk&submodules=geocoder"></script>
+<title>Linkflow캘린더</title>
+
 	
 <style>
  .wrapper{
@@ -50,9 +49,7 @@
     /*상세 모달 스타일 */
     .schDetailModal_content, .modal-content{
       display: flex;
-      justify-content: center;
       text-align: center;
-      margin: 0px 0px 20px 10px;
     }
 
     .modal-title{
@@ -67,7 +64,7 @@
     
     }
 
-    #detailBtn-modal-body{
+    #detailBtn-modal-body, #schWasteDetail-modal-body, #schWasteRemoval-modal-body{
       font-size: large;
       font-weight: bolder;
       display: flex;
@@ -87,14 +84,11 @@
 
     .dataTables_info{
       font-size: small;
-      justify-content: center;
-      text-align: center;
 
     }
     
     .pagination{
       margin-top: 10px;
-      justify-content: center;
       text-align: center;
       display: flex;
     }
@@ -169,7 +163,6 @@
       font-size:120%;
     }
 
- 
 </style>
 </head>
 <body>
@@ -198,23 +191,16 @@
 	                      <spen id="endDate"></spen> 
 	                     </div>
                       
-                    </div>
+                    </div>               
                     <!--조건 걸어야함-->
                     <div class="schDetailModal_content">
                       <label for="recipient-name" class="col-form-label">장소</label>
                       <div class="search">
                         <div id="address"></div>
-                        <div id="map" style="width:300px; height:200px; margin-top:30px;"></div>
+                       <!--  <div id="map" style="width:300px; height:200px; margin-top:30px;"></div> -->
                       </div>                          
                     </div>
-                    <!---->
-                    <div class="schDetailModal_content">
-                      <label for="recipient-name" class="col-form-label" >알림</label>
-                      <div>
-                       종료 30분 전 메일발송
-                        <input type="checkbox" class="weste-modal" id="notifyYn" style="pointer-events: none; "> 
-                      </div>
-                    </div>
+
                     <div class="schDetailModal_content">
                       <label for="message-text" class="col-form-label">내용</label>
                       <div id="schDetailModal_content_text">                            
@@ -222,6 +208,7 @@
                     </div>
                 </div>
                 <input type="hidden" name="schNo" id="schNo">
+                <input type="hidden" name="modId" id="modId">
             <div class="modal-footer justify-content-center">
                 <button type="button" class="blue-button btn schDetailModal_blueBtn" data-toggle="modal" data-target="#schUpdateModal">수정</button>
 								<button type="button" class="gray-button btn schDetailModal_grayBtn" data-toggle="modal" data-target="#detailBtn">삭제</button>
@@ -229,6 +216,9 @@
         </div>
       </div>
   </div>
+  
+  
+  
     <!--일정 상세 정보 모달 schDetailModal end-->
 	
 	<!--상세 정보 모달_버튼 모달 detailBtn start-->
@@ -245,72 +235,7 @@
       </div>
     </div>
     <!--상세 정보 모달_버튼 모달 detailBtn end-->
-    
-    <!--공유캘린더 더보기 클릭시 모달 shareCalMoreModal start-->
-    <div class="modal fade" id="shareCalMoreModal" style="color: #5f7ea6;" aria-hidden="true" aria-labelledby="shareCalMoreModalLabel" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header ml-4" style="color: rgba(21, 21, 22, 0.658); font-weight: bold; font-size: medium;">
-            <div>
-              공유 캘린더
-            </div>
-            <button type="button" class="btn btn-primary btn-sm shareCalModalBtn" style="border-radius: 15px;" data-bs-target="#shareCalModal" data-bs-toggle="modal">
-              <i class="fa-solid fa-plus fa-sm"></i>
-            </button>
-          </div>
-          <div class="modal-body" id="shareCalMoreModal-body" > 
-            <table id="example1" class="table table-bordered table-striped bin_list_table">
-              <thead>
-                <tr>
-                  <th>No.</th>
-                  <th>색상</th>
-                  <th>공유자</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td style="width: 70px; padding: 15px 0px 0px 5px;">
-                    <input type="checkbox" id="shareCheckbox1" class="calCheckbox shareCheckbox1" checked>
-                    <label for="shareCheckbox1"></label>
-                  </td>
-                  <td>홍지우 팀장&lt;개발1팀&gt;</td>
-                  <td class="shareCalMoreModal_btn d-flex justify-content-center">
-                    <button type="button" class="btn btn-primary btn-sm gray-button shareCalMoreModal_graybtn">삭제</button>
-                  </td>
-                </tr>
-               <tr>
-                <td>2</td>
-                <td style="width: 70px; padding: 15px 0px 0px 5px;">
-                  <input type="checkbox" id="shareCheckbox2" class="calCheckbox shareCheckbox1" checked>
-                  <label for="shareCheckbox2"></label>
-                </td>
-                <td>엄두강 사원&lt;개발2팀&gt;</td>
-                <td class="shareCalMoreModal_btn d-flex justify-content-center">
-                  <button type="button" class="btn btn-primary btn-sm gray-button shareCalMoreModal_graybtn" >삭제</button>
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td style="width: 70px; padding: 15px 0px 0px 5px;">
-                  <input type="checkbox" id="shareCheckbox3" class="calCheckbox shareCheckbox1" checked>
-                  <label for="shareCheckbox3"></label>
-                </td>
-                <td>조성모 사원&lt;인사1팀&gt;</td>
-                <td class="shareCalMoreModal_btn d-flex justify-content-center">
-                  <button type="button" class="btn btn-primary btn-sm gray-button shareCalMoreModal_graybtn" >삭제</button>
-                </td>
-              </tr>
-              <tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!--공유캘린더 더보기 클릭시 모달 shareCalMoreModal end-->
-    
+
 	<!-- 일정 등록 모달 -->
 		<div class="modal fade" id="schInsertModal" tabindex="-1" aria-labelledby="schInsertModal" aria-hidden="true">
 		    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -362,17 +287,10 @@
 		                        <label for="address" class="col-form-label">장소</label>
 		                        <div class="search mt-1">
 		                            <input type="text" name="address" class="form-select" style="width:320px; font-size: small; margin-left: 30px;">
-   														  <div id="map" style="width:300px; height:200px; margin-top:30px;"></div>		                        
+   														 <!--  <div id="map" style="width:300px; height:200px; margin-top:30px;"></div>		             -->           
    												  </div>
 		                    </div>
-		                    <!-- 알림 설정 -->
-		                    <div class="schDetailModal_content">
-		                        <label for="notifyYn" class="col-form-label" >알림</label> 
-		                        <div>
-		                           종료 30분 전 메일발송
-		                            <input type="checkbox" class="weste-modal" name="notifyYn" id="notifyInsertBtn">
-		                        </div>
-		                    </div>
+
 		                    <!-- 일정 내용 -->
 		                    <div class="schDetailModal_content">
 		                        <label for="schContent" class="col-form-label">내용</label>
@@ -380,10 +298,12 @@
 		                        <div id="output-box"></div>
 		                    </div>
 		                    <div class="schDetailModal_content justify-content-start text-sm">
-                     		 <button type="button" class="btn schShareBtn" data-bs-target="#schShareModal" data-bs-toggle="modal">+ 일정공유</button>
+                     		 <a class="btn schShareBtn" data-bs-target="#schShareModal" data-bs-toggle="modal">+ 일정공유</a>
                        </div>
 		                    <!-- 수정자 아이디 -->
 		                   <input type="hidden" name="modId" id="modId">
+		                   <input type="hidden" name="shareIds" id="shareIds">
+		                   
 		                </form>
 		            </div>
 		            <div class="modal-footer justify-content-center">
@@ -442,30 +362,25 @@
 		                        <label for="address" class="col-form-label">장소</label>
 		                        <div class="search mt-1">
 		                            <input type="text" name="address" id="address" class="form-select" style="width:320px; font-size: small; margin-left: 30px;">
-   															<div id="map" style="width:300px; height:200px; margin-top:30px;"></div>		                       
+   															<!-- <div id="map" style="width:300px; height:200px; margin-top:30px;"></div>		                        -->
 		                    		</div>
 		                    </div>
-		                    <!-- 알림 설정 -->
-		                    <div class="schDetailModal_content">
-		                        <label for="notifyYn" class="col-form-label" >알림</label> 
-		                        <div>
-		                           종료 30분 전 메일발송
-		                            <input type="checkbox" class="weste-modal" name="notifyYn" id="notifyYN">
-		                        </div>
-		                    </div>
+		                 
 		                    <!-- 일정 내용 -->
 		                    <div class="schDetailModal_content">
 		                        <label for="schContent" class="col-form-label">내용</label>
 		                        <textarea class="schInsertModal_content_text mt-2" name="schContent" id="schContent" style="margin-left:67px; " required ></textarea>
 		                    </div>
 		                    <div class="schDetailModal_content justify-content-start text-sm">
-                     		 <button type="button" class="btn schShareBtn" data-bs-target="#schShareModal" data-bs-toggle="modal">+ 일정공유</button>
+                     		 <a class="btn schShareBtn" data-target="#schShareModal" data-bs-toggle="modal">+ 일정공유</a>
                        </div>
                        <input type="hidden" name="schNo" id="schNo">
                        <input type="hidden" name="calNo" id="calNo">                       
+		                   <input type="hidden" name="shareIds" id="shareIds">
+		                
 		                </form>
 		            </div>
-		            <div class="modal-footer justify-content-center">
+		            <div class="modal-footer justify-content-center">                              
 		                <button type="button" id="schUpdateButton" class="btn blue-button">수정</button>
 		                <button type="button" class="btn gray-button" id="schUpdateCancelBtn" >취소</button>
 
@@ -476,854 +391,398 @@
     <!--일정 수정 모달 end-->
     
     <!--공유 일정 모달 start-->
-    <div class="modal fade" id="schShareModal" tabindex="-1" aria-labelledby="schShareModal" aria-hidden="true">
-      <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" style="min-width: 850px;">
+    <div class="modal fade" id="schShareModal">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content" style="min-width: 1400px; text-align: initial !important;">
           <div class="modal-header">
             <h4 class="modal-title">일정 공유</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="row" style="min-width: 850px;">
-                <div class="card-body">
-  
-                    <form action="xxxxxxx" method="post">
-                     <div class="searchUser">
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row" style="min-width: 1400px;">
+              <div class="card-body">
+
+                   <div class="searchUser">
+
+                     <div class="col-md-3" style="margin-top: 15px;">
+                       <div class="form-group">
+                         <div class="input-group" style="width: 800px;">
+                             <input type="search" class="form-control" id="searchInput" placeholder="사원명이나 조직명으로 검색하세요" value="" name="useName">
+                             <div class="input-group-append">
                        
-                      <div class="form-check form-check-inline text-align-center ml-5">
-                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-                         <label class="form-check-label" for="inlineRadio1">이름, 아이디</label>
-                     </div>
-                     <div class="form-check form-check-inline">
-                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-                         <label class="form-check-label" for="inlineRadio2">조직</label>
-                     </div>
-
-                       <div class="col-md-3" style="margin-top: 15px;">
-                         <div class="form-group">
-                           <div class="input-group">
-                            <input type="search" class="form-control" value="" name="useName">
-                              <div class="input-group-append">
-                                   <button type="button" class="btn btn-primary">
-                                       <i class="fa fa-search"></i>
-                                   </button>
-                               </div>
-                           </div>
+                             </div>
                          </div>
                        </div>
-                     </form>
+                     </div>
 
-                     </div><!--searchUser 끝-->
+                   </div><!--searchUser 끝-->
 
-                     <div class="row">
-                      <div class="card card-default card-info" style="width: 250px; height: 400px; margin-left: 45px; margin-right: 20px;">
-                        <div class="card-header">
-                          <h5 class="card-title">사원설정</h5>
-                        </div>
-                         
-                         <div class="card-body text-nowrap overflow-auto">
-                         
-                           <div id="kt_docs_jstree_basic">
-                             <ul>
-                                 <li data-jstree='{ "type" : "buiding" }'>
-                                     LinkFlow
-                                     <ul>
-                                         <li data-jstree='{ "type" : "group" }'>
-                                             경영지원부서
-                                             <ul>
-                                                 <li data-jstree='{ "selected" : false }'>
-                                                     경영지원팀
-                                                     <ul>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김경영 대리
-                                                         </li>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김가렌 사원
-                                                         </li>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김지우 사원
-                                                         </li>
-                                                     </ul>
-                                                 </li>
-                                                 <li data-jstree='{ "selected" : false }'>
-                                                     개발부서
-                                                     <ul>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김개발 대리
-                                                         </li>
-                                                         
-                                                     </ul>
-                                                 </li>
-                                             </ul>
-                                         </li>
-                                     </ul>
-                                 </li>
-                                 
-                             </ul>
-                            
-                           </div><!--jstree 끝-->
-                           
-                         </div>
+                   <div class="row">
+                     <div class="card card-default card-info" style="width: 300px; height: 500px; margin-right: 20px;">
+                       <div class="card-header">
+                         <h5 class="card-title">사원 설정</h5>
                        </div>
-
-                       <div class="card card-info" style="width: 180px; height: 400px;">
-                        <div class="card-header">
-                           <h3 class="card-title">
-                              결재자 선택
-                           </h3>
-
-                         </div>
-                         <div class="card-body text-nowrap overflow-auto resultNameArea">
+                       
+                       <div class="card-body text-nowrap overflow-auto">
+                       
+                         <div id="kt_docs_jstree_basic">
+                           <ul>
+                               <li data-jstree='{ "type" : "buiding" }'>
+                                   LinkFlow
+                                   <ul>
+	                                   <c:forEach var="appr" items="${apprList}">
+		                                   <li data-jstree='{ "selected" : false }'>
+		                                   		${appr.deptTitle}
+		                                   			<ul>
+	                                         		<c:forEach var="apprPerson" items="${appr.memberList}" varStatus="status">
+	                                         			<li data-jstree='{ "type" : "person" }' data-userid="${apprPerson.userId}">
+	                                                 ${apprPerson.userName} ${apprPerson.subName}
+	                                                 <input type="text" class="userId" value="${apprPerson.userId}" style="display: none;"/>
+	                                                
+	                                             </li>
+	                                         		</c:forEach>
+	                                         </ul>
+		                                   </li>
+	                                   </c:forEach>
+                                    </ul>
+                           </ul>
+                               
                           
+                         </div><!--jstree 끝-->
                          
-                         </div>
+                         
                        </div>
-                       
-                       <div class="btnArea">
-                        <div class="downArea" >
-                           <i class="fa-solid fa-angles-right referenceIn"></i>
-                           <i class="fa-solid fa-angles-left referenceOut"></i>
-                         </div>
-                       </div>
-                       
-                       <div class="column singArea">
-                       
-
-                       <div class="card card-info mr-3" style="width: 180px; height: 200px; margin-top: 100px;">
-                        <div class="card-header">
-                          <h5 class="card-title">조회 권한</h5>
-                          
-                         </div>
-                         <div class="card-body referenceArea overflow-auto">
-
-                         </div>
-                       </div>
-                       </div>
-
-
                      </div>
-                 </div>
-                 <!-- /.card-body -->
-            
-              </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-              <button type="button" class="btn btn-primary" data-dismiss="modal" id="saveData">설정하기</button>
+
+                     <div class="card card-info" style="width: 500px; height: 500px;">
+                       <div class="card-header">
+                         <h3 class="card-title">
+                            직원 선택
+                         </h3>
+
+                       </div>
+                       <div class="card-body text-nowrap overflow-auto resultNameArea">
+                        
+                       
+                       </div>
+                     </div>
+                     
+                     <div class="btnArea">
+                       <div class="downArea" >
+                         <i class="fa-solid fa-angles-right referenceIn"></i>
+                         <i class="fa-solid fa-angles-left referenceOut"></i>
+                       </div>
+                     </div>
+                     
+                     <div class="column singArea">
+
+                     <div class="card card-info" style="width: 400px;  height: 200px; margin-top: 100px;">
+                       <div class="card-header">
+                         <h5 class="card-title">조회 권한</h5>
+                         
+                        
+                       </div>
+                       <div class="card-body referenceArea overflow-auto">
+                         <input type="hidden" value="" id="approvalUserId">
+                       </div>
+                     </div>
+                     </div>
+
+
+                   </div>
+               </div>
+               <!-- /.card-body -->
+          
             </div>
           </div>
-          <!-- /.modal-content -->
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-primary" id="saveData" data-dismiss="modal">확인</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+          </div>
         </div>
-        <!-- /.modal-dialog -->
+        <!-- /.modal-content -->
       </div>
-    <!-- /.modal -->
+      <!-- /.modal-dialog -->
+    </div>
     <!--공유 일정 모달 end-->
-    
-    <!--공유 캘린더 모달 start-->
-    <div class="modal fade" id="shareCalModal" tabindex="-1" aria-labelledby="schShareModal" aria-hidden="true">
-      <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" style="min-width: 850px;">
-          <div class="modal-header">
-            <h4 class="modal-title">캘린더 공유</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="row" style="min-width: 850px;">
-                <div class="card-body">
-  
-                    <form action="xxxxxxx" method="post">
-                      <div class="selectCal" style="margin-right: 550px;">
-                        <label for="recipient-name" class="col-form-label mx-1">캘린더</label>
-                          <select class="form-select" id="calendar" name="calendar">
-                              <option value="" selected>개인 캘린더</option>
-                              <option value="">부서 캘린더</option>
-                              <option value="">회사 캘린더</option>
-                          </select>
-                      </div>
-                      <div class="selectCal" style="margin-right: 550px;">
-                        <label for="recipient-name" class="col-form-label mx-1">색상</label>
-                          <select class="form-select" id="calendar" name="calendar">
-                              <option value="" selected>개인 캘린더</option>
-                              <option value="">부서 캘린더</option>
-                              <option value="">회사 캘린더</option>
-                          </select>
-                      </div>
-                     <div class="searchUser">
-                      <div class="form-check form-check-inline text-align-center ml-5">
-                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-                         <label class="form-check-label" for="inlineRadio1">이름, 아이디</label>
-                     </div>
-                     <div class="form-check form-check-inline">
-                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-                         <label class="form-check-label" for="inlineRadio2">조직</label>
-                     </div>
-
-                       <div class="col-md-3" style="margin-top: 15px;">
-                         <div class="form-group">
-                           <div class="input-group">
-                            <input type="search" class="form-control" value="" name="useName">
-                              <div class="input-group-append">
-                                   <button type="submit" class="btn btn-primary">
-                                       <i class="fa fa-search"></i>
-                                   </button>
-                               </div>
-                           </div>
-                         </div>
-                       </div>
-                     </form>
-
-                     </div><!--searchUser 끝-->
-
-                     <div class="row">
-                      <div class="card card-default card-info" style="width: 250px; height: 400px; margin-left: 45px; margin-right: 20px;">
-                        <div class="card-header">
-                          <h5 class="card-title">사원설정</h5>
-                        </div>
-                         
-                         <div class="card-body text-nowrap overflow-auto">
-                         
-                           <div id="kt_docs_jstree_shareCal">
-                             <ul>
-                                 <li data-jstree='{ "type" : "buiding" }'>
-                                     LinkFlow
-                                     <ul>
-                                         <li data-jstree='{ "type" : "group" }'>
-                                             경영지원부서
-                                             <ul>
-                                                 <li data-jstree='{ "selected" : false }'>
-                                                     경영지원팀
-                                                     <ul>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김경영 대리
-                                                         </li>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김가렌 사원
-                                                         </li>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김지우 사원
-                                                         </li>
-                                                     </ul>
-                                                 </li>
-                                                 <li data-jstree='{ "selected" : false }'>
-                                                     개발부서
-                                                     <ul>
-                                                         <li data-jstree='{ "type" : "person" }'>
-                                                             김개발 대리
-                                                         </li>
-                                                         
-                                                     </ul>
-                                                 </li>
-                                             </ul>
-                                         </li>
-                                     </ul>
-                                 </li>
-                                 
-                             </ul>
-                            
-                           </div><!--jstree 끝-->
-                           
-                         </div>
-                       </div>
-
-                       <div class="card card-info" style="width: 180px; height: 400px;">
-                        <div class="card-header">
-                           <h3 class="card-title">
-                              결재자 선택
-                           </h3>
-
-                         </div>
-                         <div class="card-body text-nowrap overflow-auto resultNameArea">
-                          
-                         
-                         </div>
-                       </div>
-                       
-                       <div class="btnArea">
-                        <div class="downArea" >
-                           <i class="fa-solid fa-angles-right referenceIn"></i>
-                           <i class="fa-solid fa-angles-left referenceOut"></i>
-                         </div>
-                       </div>
-                       
-                       <div class="column singArea">
-                       
-
-                       <div class="card card-info mr-3" style="width: 180px; height: 200px; margin-top: 100px;">
-                        <div class="card-header">
-                          <h5 class="card-title">조회 권한</h5>
-                          
-                         </div>
-                         <div class="card-body referenceArea overflow-auto">
-
-                         </div>
-                       </div>
-                       </div>
-
-
-                     </div>
-                 </div>
-                 <!-- /.card-body -->
-            
-              </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-              <button type="button" class="btn btn-primary" data-dismiss="modal" id="saveData">설정하기</button>
-            </div>
-          </div>
-          <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-      </div>
-    <!-- /.modal -->
-    <!--공유 캘린더 모달 end-->
+    	
+   
     
     <!------휴지통 모달------------------------------------------------  -->
      <!-- 일정 상세 정보 모달 start -->
-      <div class="modal fade" id="schDetailModal" tabindex="-1" aria-labelledby="schDetailModal" aria-hidden="true">
+      <div class="modal fade" id="schWasteDetail" tabindex="-1" aria-labelledby="schDetailModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header justify-content-center">
-                    <h5 class="modal-title font-weight-bolder" id="schDetailTitle">개발2팀 회식</h5>
+                    <h5 class="modal-title font-weight-bolder" id="schWasteDetailTitle"></h5>
                 </div>
                 <div class="modal-body">
                     <div>
                         <div class="schDetailModal_content justify-content-end mx-1">
                           중요일정&nbsp;
-                          <input type="checkbox" class="weste-modal" id="recipient-name">
+                          <input type="checkbox" class="weste-modal" id="schWasteImport" style="pointer-events: none;">
                         </div>
                         <div class="schDetailModal_content font-weight-bolder">
-                            <label for="recipient-name" class="col-form-label">캘린더</label>
-                            <p style="padding-right: 30px;">부서 캘린더</p> 
+                            <label for="recipient-name" class="col-form-label" >캘린더</label>
+                            <p style="padding-right: 30px;" id="wasteSubCode"></p> 
                         </div>
                         <div class="schDetailModal_content"> 
-                          <label for="recipient-name" class="col-form-label">일정</label> 
-                          <p>2024/04/26&nbsp; 오전 9:30 ~ 오전 10:00</p> 
-                        </div>
+                          <label for="recipient-name" class="col-form-label" >일정</label> 
+	                         <p class="wasteDate" >
+			                      <span id="wasteStartDate"></span> 
+			                      <span id="wasteEndDate"></span> 
+		                     	 </p>
+                   		  </div>
                         <!--조건 걸어야함-->
                         <div class="schDetailModal_content">
                           <label for="recipient-name" class="col-form-label">장소</label>
-                          <div class="search">
-                            <div>서울시 서초구 방배동 939-949</div>
-                            <div id="map" style="width:300px; height:200px; margin-top:30px;"></div>
-                          </div>                          
-                        </div>
-                        <!---->
-                        <div class="schDetailModal_content">
-                          <label for="recipient-name" class="col-form-label">알림</label>
-                          <p>
-                            30분 전 메일발송
-                            <input type="checkbox" class="weste-modal" id="recipient-name">
-                          </p>
-                        </div>
+                         	<div class="search">
+		                        <div id="wasteAddress"></div>
+                      		</div>                                                   
+                        </div>  
+
                         <div class="schDetailModal_content">
                           <label for="message-text" class="col-form-label">내용</label>
-                          <p id="schDetailModal_content_text"> 
-                               서울시 서초구 방배동 939-949에 있는
-                              '떡봉솥뚜껑닭볶음탕찾아주셔서서감사
-                               합니다' 에서 부서 전체 회식
+                          <p id="schWasteDetail_content_text">    
                           </p>
                         </div>
                      </div>
                 </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn blue-button" data-bs-target="#detailBtn" data-bs-toggle="modal" style="color: white;">복구</button>
-                    <button type="button" class="btn gray-button" data-bs-target="#detailBtn" data-bs-toggle="modal" style="color: white;">삭제</button>
-                </div>
+                 <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary btn-sm" id="restoreBtn" data-bs-target="#wasteDetailBtn" data-bs-toggle="modal" style="color: white; margin-left:30px;">복구</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="removalBtn" data-bs-target="#wasteRemovalBtn" data-bs-toggle="modal" style="color: white;">삭제</button>
+            		 </div>
             </div>
-          </div>
-        </div>
+         </div>
+      </div>
+        
         <!--일정 상세 정보 모달 end-->
-        <!--상세 정보 모달_버튼 모달 start-->
-        <div class="modal fade" id="detailBtn" aria-hidden="true" aria-labelledby="detailBtnLabel" tabindex="-1">
+        <!--상세 정보 모달_버튼 모달 (복구) start-->
+        <div class="modal fade" id="wasteDetailBtn" aria-hidden="true" aria-labelledby="detailBtnLabel" tabindex="-1">
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-              <div class="modal-body" id="detailBtn-modal-body" > 
+             	<div>	
+             		<div class="modal-body" id="schWasteDetail-modal-body" > 
+              	</div>
               </div>
-              <div class="modal-checkBtn">
-                <i class="fa-solid fa-check fa-xl mb-5 mr-4" id="schDetailDeleteBtn" style="color: #055dd1;"></i>
-                <i class="fa-solid fa-xmark fa-xl mb-5 before-btn" id="schDetailCencelBtn" style="color: #bcbdbd;"></i>
+              <div>         
+	             	 <div class="modal-checkBtn">
+	                <i class="fa-solid fa-check fa-xl mb-5 mr-4" id="schRestore" style="color: #055dd1;"></i>
+	                <i class="fa-solid fa-xmark fa-xl mb-5 before-btn" id="schCencelBtn" style="color: #bcbdbd;"></i>
+	             	 </div>
+           		 </div>
+         		 </div>
+        		</div>
+        	</div>
+        <!--상세 정보 모달_버튼 모달 ends-->
+         <!--상세 정보 모달_버튼 모달 (삭제) start-->
+        <div class="modal fade" id="wasteRemovalBtn" aria-hidden="true" aria-labelledby="detailBtnLabel" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+             	<div>	
+             		<div class="modal-body" id="schWasteRemoval-modal-body" > 
+              	</div>
               </div>
-            </div>
-          </div>
-        </div>
+              <div>         
+	             	 <div class="modal-checkBtn">
+	                <i class="fa-solid fa-check fa-xl mb-5 mr-4" id="schComplete" style="color: #055dd1;"></i>
+	                <i class="fa-solid fa-xmark fa-xl mb-5 before-btn" id="schCencelBtn" style="color: #bcbdbd;"></i>
+	             	 </div>
+           		 </div>
+         		 </div>
+        		</div>
+        	</div>
         <!--상세 정보 모달_버튼 모달 ends-->
         
     <script>
 
-//공유일정 조직도 모달 schShareModal***********************************************
-  $(document).ready(function(){
-    //열기 
+ //공유일정 조직도 모달 schShareModal***********************************************
+	//공유일정 조직도 조회
     $('.schShareBtn').click(function(){
       $('#schShareModal').modal('show');
-      $('body').addClass('modal-open'); // 모달이 열릴 때 바디에 modal-open 클래스 추가
-    }); 
-    //설정하기 버튼 클릭시
-    //닫기 클릭시
-  });
-
-//캘린더 모달 end
+      $('body').addClass('modal-open'); 
+    });  
+    
 
 
 //공유일정 조직도 script start***********************************************
-$('#kt_docs_jstree_basic').jstree({
-    "core" : {
-        "themes" : {
-            "responsive": false
-        }
-    },
-    "types" : {
-        "default" : {
-            "icon" : "fa fa-folder"
-        },
-        "group" : {
-            "icon" : "fa-solid fa-user-group"
-        },
-        "building" : {
-            "icon" : "fa-solid fa-building"
-        },
-        "person" : {
-            "icon" : "fa-solid fa-person"
-        }
-    },
-    "plugins": ["types"]
-}).on('select_node.jstree', function (e, data) {
-    var node = data.node;
-    
-    if (node.type === "person") {
-        var personName = node.text;
+  
+    $('#saveData').click(function(){
+    	referenceHiddenValues = [];
+
+    	var $referAreaContent = '';
+    	$('.referenceName').each(function(index) {
+    	    var referenceNameHtml = $(this)
+            .clone() 
+            .find('input[type="checkbox"]') 
+            .remove() 
+            .end() 
+            .find('.userId')
+            .attr('name', 'edocRefList[' + index + '].userId') 
+            .css('display', 'none') 
+            .end() 
+            .html(); 
+
+        $referAreaContent += '<div class="referArea">' + referenceNameHtml + '</div>';
+    	});
+    	$('#refSelectedArea').html($referAreaContent);
+
+    	
+    	$('.referenceName').each(function() {
+    	    var hiddenValue = $(this).attr('data-hidden-value');
+    	    if (hiddenValue) {
+    	         if ($(this).hasClass('referenceName')) {
+    	            referenceHiddenValues.push(hiddenValue);
+    	        }
+    	    }
+    	});
         
-        var isExistingName = $('.resultNameArea').find('.NameArea:contains("'+ personName +'")').length > 0;
-        
-        if (!isExistingName) {
-            var html = '<div class="NameArea">' + personName +'<input type="checkBox"></div>';
-            
-            $('.resultNameArea').append(html);
-        } else {
-            $('.resultNameArea').find('.NameArea:contains("'+ personName +'")').remove();
-        }
-    }
-});
-
-
-    
-      document.querySelector('.referenceIn').addEventListener('click', function() {
-    var nameAreas = document.querySelectorAll('.NameArea');
-    
-    nameAreas.forEach(function(nameArea) {
-        var checkbox = nameArea.querySelector('input[type="checkbox"]:checked');
-        if (checkbox) {
-            var nameValue = nameArea.textContent.trim();
-            
-          
-            var existingElement = document.querySelector('.referenceArea .referenceName');
-            if (existingElement && existingElement.textContent.trim() === nameValue) {
-                return; 
-            }
-
-            var referenceName = document.createElement('div');
-            referenceName.className = 'referenceName';
-            referenceName.textContent = nameValue;
-            document.querySelector('.referenceArea').appendChild(referenceName);
-            
-            nameArea.remove();
-            }
-        });
     });
+
+
+
+          // 결재선 설정 모달 스크립트
+          $('#kt_docs_jstree_basic').jstree({
+        "core" : {
+            "themes" : {
+                "responsive": false
+            }
+        },
+        "types" : {
+            "default" : {
+                "icon" : "fa fa-folder"
+            },
+            "group" : {
+                "icon" : "fa-solid fa-user-group"
+            },
+            "building" : {
+                "icon" : "fa-solid fa-building"
+            },
+            "person" : {
+                "icon" : "fa-solid fa-person"
+            }
+        },
+        "plugins": ["types", "search"],
+        "search" : {
+        	"show_only_matches" : true,
+        	"show_only_matches_children" : true,
+        }
+        
+    }).on('select_node.jstree', function (e, data) {
+    	var node = data.node;
+
+        if (node.type === "person") {
+            var personName = node.text;
+            var userId = node.li_attr['data-userid']; 
+           
+           
+            var existNameArea = $('.resultNameArea [data-userid="' + userId + '"]');
+					
+            if (existNameArea.length >0) { 
+                existNameArea.remove(); 
+            }else{
+
+            var html = '<div class="NameArea" data-userid="' + userId + '">' + personName + '<input type="checkBox"></div>';
+            $('.resultNameArea').append(html);
+            }
+        }
+    });
+		
+   var to = false;
+   $('#searchInput').keyup(function () {
+       if(to) { clearTimeout(to); }
+       to = setTimeout(function () {
+           var v = $('#searchInput').val();
+           $('#kt_docs_jstree_basic').jstree(true).search(v);
+       }, 250);
+   });
+          
+   
+
+   function moveApprovalNames(approvalNames) {
+       approvalNames.forEach(function(approvalName) {
+           var checkbox = approvalName.querySelector('input[type="checkbox"]:checked');
+           if (checkbox) {
+               var nameText = approvalName.innerHTML.trim();
+
+               var resultName = document.createElement('div');
+               resultName.className = 'NameArea';
+               resultName.innerHTML = nameText;
+
+               var newCheckbox = document.createElement('input');
+              
+
+               document.querySelector('.resultNameArea').appendChild(resultName);
+
+               approvalName.remove();
+           }
+       });
+   }
+
+           
+
+   document.querySelector('.referenceIn').addEventListener('click', function() {
+	    var shareIds = [];
+	    var nameAreas = document.querySelectorAll('.NameArea');
+
+	    nameAreas.forEach(function(nameArea) {
+	        var checkbox = nameArea.querySelector('input[type="checkbox"]:checked');
+	        if (checkbox) {
+	            var userId = nameArea.getAttribute('data-userid');
+	            shareIds.push(userId);
+	            // 중복 확인 이미 있으면 못 넘어가게
+	            var duplicate = false;
+	            document.querySelectorAll('.referenceArea .referenceName').forEach(function(referenceName) {
+	              if (referenceName.getAttribute('data-userid') === userId) {
+	            	  duplicate = true;
+	              }
+	            });
+
+	            if (!duplicate) { // 중복 확인
+	              shareIds.push(userId);
+
+	              var nameValue = nameArea.innerHTML.trim();
+	              var referenceName = document.createElement('div');
+	              referenceName.className = 'referenceName';
+	              referenceName.setAttribute('data-userid', userId); // 추가된 부분
+	              referenceName.innerHTML = nameValue;
+	              document.querySelector('.referenceArea').appendChild(referenceName);
+
+	              nameArea.remove();
+	            }
+	          }
+	        });
+
+	    document.getElementById('shareIds').value = shareIds.join(',');
+	});
 
     document.querySelector('.referenceOut').addEventListener('click', function() {
-          
-          var approvalNames = document.querySelectorAll('.referenceArea .referenceName');
+        var approvalNames = document.querySelectorAll('.referenceArea .referenceName');
 
-          
-          approvalNames.forEach(function(referenceName) {
-              
-              var nameValue = referenceName.textContent.trim();
-              
-              var resultNameArea = document.querySelector('.resultNameArea');
-            
-              var nameArea = document.createElement('div');
-              nameArea.className = 'NameArea';
-              nameArea.textContent = nameValue;
-              
-              var checkbox = document.createElement('input');
-              checkbox.type = 'checkbox';
-              nameArea.appendChild(checkbox);
-              
-              resultNameArea.appendChild(nameArea);
-              
-              referenceName.remove();
-          });
-      });
+        approvalNames.forEach(function(referenceName) {
+            var checkbox = referenceName.querySelector('input[type="checkbox"]:checked');
+            if (checkbox) {
+                var nameValue = referenceName.innerHTML.trim();
 
-  
-      document.getElementById('saveData').addEventListener('click', function() {
-        var approvalName1Element = document.querySelector('.approvalName1');
-        var approvalName2Element = document.querySelector('.approvalName2');
-
-    
-        var approvalName1Text = approvalName1Element ? approvalName1Element.textContent : '';
-        var frtApprovalElement = document.querySelector('.frtApproval');
-        frtApprovalElement.textContent = approvalName1Text;
-
-        
-        var approvalName2Text = approvalName2Element ? approvalName2Element.textContent : '';
-        var scdApprovalElement = document.querySelector('.scdApproval');
-        scdApprovalElement.textContent = approvalName2Text;
-
-        var referenceNameElements = document.querySelectorAll('.referenceName');
-        var textToInsert = '';
-
-        referenceNameElements.forEach(function(referenceNameElement, index) {
-            var text = referenceNameElement.textContent.trim();
-            if (index > 0) {
-                textToInsert += ', ';
-            }
-            textToInsert += text;
-        });
-
-        document.getElementById('refMember').value = textToInsert;
-   });
-
-
-//공유캘린더 조직도 end***********************************************
-    
-    
-    //공유캘린더 사이드바 더보기 모달*******************************
-      //공유캘린더 더보기 클릭시 목록 조회 모달
-      $(document).ready(function() {
-         //더보기 클릭시
-          $('.shareCalMoreBtn').click(function() {
-            $('body').addClass('modal-open'); // 모달이 열릴 때 바디에 modal-open 클래스 추가
-            $('#shareCalMoreModal').modal('show');
-          }); 
-
-         //삭제버튼 클릭시
-         $('.shareCalMoreModal_graybtn').click(function() {
-          $('#shareCalMoreModal').modal('hide'); 
-          $('#detailBtn-modal-body').html('<div>공유된 캘린더를 삭제하시겠습니까?</div>');
-            $('#detailBtn').modal('show');
-            $('body').addClass('overflow-hidden');
-        });
-
-          // shareCalMoreModal 닫힐 때
-          $('#shareCalMoreModal').on('hidden.bs.modal', function(e) {
-              $('body').removeClass('modal-open'); // 바디에서 modal-open 클래스 제거
-            });
-
-          //삭제버튼 닫을 때
-          $('#detailBtn').on('hidden.bs.modal', function() {
-            $('body').removeClass('overflow-hidden');
-          });
-          
-          //공유캘린더 조직도 모달 shareCalModalBtn
-          //열기 
-          $('.shareCalModalBtn').click(function(){
-            $('#shareCalModal').modal('show');
-            $('body').addClass('modal-open'); // 모달이 열릴 때 바디에 modal-open 클래스 추가
-          }); 
-          //설정하기 버튼 클릭시
-          
-          //닫기 클릭시
-        });
-     //공유캘린더 사이드바 더보기_조직도 script*******************************
-//공유캘린더 start
-    $('#kt_docs_jstree_shareCal').jstree({
-      "core" : {
-          "themes" : {
-              "responsive": false
-          }
-      },
-      "types" : {
-          "default" : {
-              "icon" : "fa fa-folder"
-          },
-          "group" : {
-              "icon" : "fa-solid fa-user-group"
-          },
-          "building" : {
-              "icon" : "fa-solid fa-building"
-          },
-          "person" : {
-              "icon" : "fa-solid fa-person"
-          }
-      },
-      "plugins": ["types"]
-  }).on('select_node.jstree', function (e, data) {
-      var node = data.node;
-      
-      if (node.type === "person") {
-          var personName = node.text;
-          
-          var isExistingName = $('.resultNameArea').find('.NameArea:contains("'+ personName +'")').length > 0;
-          
-          if (!isExistingName) {
-              var html = '<div class="NameArea">' + personName +'<input type="checkBox"></div>';
-              
-              $('.resultNameArea').append(html);
-          } else {
-              $('.resultNameArea').find('.NameArea:contains("'+ personName +'")').remove();
-          }
-      }
-  });
-
-
-      
-        document.querySelector('.referenceIn').addEventListener('click', function() {
-      var nameAreas = document.querySelectorAll('.NameArea');
-           
-      nameAreas.forEach(function(nameArea) {
-          var checkbox = nameArea.querySelector('input[type="checkbox"]:checked');
-          if (checkbox) {
-              var nameValue = nameArea.textContent.trim();
-              
-            
-              var existingElement = document.querySelector('.referenceArea .referenceName');
-              if (existingElement && existingElement.textContent.trim() === nameValue) {
-                  return; 
-              }
-
-              var referenceName = document.createElement('div');
-              referenceName.className = 'referenceName';
-              referenceName.textContent = nameValue;
-              document.querySelector('.referenceArea').appendChild(referenceName);
-              
-              nameArea.remove();
-              }
-          });
-      });
-
-      document.querySelector('.referenceOut').addEventListener('click', function() {
-            
-            var approvalNames = document.querySelectorAll('.referenceArea .referenceName');
-
-            
-            approvalNames.forEach(function(referenceName) {
-                
-                var nameValue = referenceName.textContent.trim();
-                
                 var resultNameArea = document.querySelector('.resultNameArea');
-              
+
                 var nameArea = document.createElement('div');
                 nameArea.className = 'NameArea';
-                nameArea.textContent = nameValue;
-                
-                var checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                nameArea.appendChild(checkbox);
-                
+                nameArea.innerHTML = nameValue;
+
                 resultNameArea.appendChild(nameArea);
-                
+
                 referenceName.remove();
-            });
-        });
-
-    
-        document.getElementById('saveData').addEventListener('click', function() {
-          var approvalName1Element = document.querySelector('.approvalName1');
-          var approvalName2Element = document.querySelector('.approvalName2');
-
-      
-          var approvalName1Text = approvalName1Element ? approvalName1Element.textContent : '';
-          var frtApprovalElement = document.querySelector('.frtApproval');
-          frtApprovalElement.textContent = approvalName1Text;
-
-          
-          var approvalName2Text = approvalName2Element ? approvalName2Element.textContent : '';
-          var scdApprovalElement = document.querySelector('.scdApproval');
-          scdApprovalElement.textContent = approvalName2Text;
-
-          var referenceNameElements = document.querySelectorAll('.referenceName');
-          var textToInsert = '';
-
-          referenceNameElements.forEach(function(referenceNameElement, index) {
-              var text = referenceNameElement.textContent.trim();
-              if (index > 0) {
-                  textToInsert += ', ';
-              }
-              textToInsert += text;
-          });
-
-          document.getElementById('refMember').value = textToInsert;
-     }); 
-//공유캘린더 end
-    
-
- // 캘린더 등록하기 모달(schInsertModal)***********************************************
-
-	$(document).ready(function() {
- //캘린더 일정등록 ajax
-			//일정등록 클릭시 모달 띄우기
-			 // 로그인 확인
-	    var login = '${loginUser.userId}';
-	
-	    // 일정 등록 버튼 클릭 시 모달 띄우기
-	    if (login === '') {
-	        $('.schInsertModalBtn').click(function() {
-	            alert("일정을 등록하려면 로그인을 해 주세요.");
-	            window.location.href = "${contextPath }/member/loginout.me"; // 로그인 페이지 경로로 이동
-	        });
-	    } else {
-	        $('.schInsertModalBtn').click(function() {
-	            $('#schInsertModal').modal('show');
-	            $('body').addClass('modal-open'); 
-	        });
-	    }
-
-		  // 중요일정 체크박스 클릭 시 조건
-	    $('#schImportInsertBtn').click(function() {
-	        var important = $(this).is(':checked') ? 'Y' : 'N';
-	        $('input[name="schImport"]').val(important);
-	    });
-		  
-	    $('#notifyInsertBtn').click(function() {
-	        var notify = $(this).is(':checked') ? 'Y' : 'N';
-	        $('input[name="notifyYn"]').val(notify);
-	    });
-	    
-	    var mod = '${loginUser.userId}'; 
-        $('input[name="modId"]').val(mod); 
-
-    	//등록 ajax
-   		 $('#schInsertButton').click(function() {
-   		  // 날짜 비교 시간까지 비교
-   		  var start = $('input[name="startDate"]').val();
-        var end = $('input[name="endDate"]').val();
-        if (start > end) {
-            alert("종료일이 시작일보다 작을 수 없습니다.");
-            return; 
-        }
-   	    	
-        $.ajax({
-            type: "POST",
-            url: "${contextPath}/calendar/regist.do", // 일정 등록 컨트롤러의 엔드포인트
-            data: $('#scheduleForm').serialize(),
-            success: function(result) {
-            	if (result === "success") {
-                // 성공-  모달 닫기
-                console.log("일정 등록이 성공했습니다.");
-                alert("일정 등록이 성공했습니다."); 
-                $("#schInsertModal").modal("hide");
-                $('#scheduleForm')[0].reset(); //초기화
-            	}
-            },
-            error: function(result) {
-                // 요청이 실패했을 때 
-                console.error("일정 등록에 실패했습니다.");
-                alert("일정 등록에 실패했습니다.");
-
             }
         });
     });
- //캘린더 일정등록 ajax end **************************************
 
- 	    //schInsertModal 닫힐 때
- 	    $('#schInsertModal').on('hidden.bs.modal', function(e) {
- 	        $('body').removeClass('modal-open'); // 바디에서 modal-open 클래스 제거
- 	    }); 
- 	    
- 	  	//등록모달 -> 삭제버튼 클릭시
- 	    $('#cencelBtn').click(function() {
-        $('#schInsertModal').modal('hide');
-    	}); 
-
-	});
  
-    
- 
-  //네이버 지도 api start
-    selectMapList();
-
-//검색한 주소의 정보를 insertAddress 함수로 넘겨준다
-      function searchAddressToCoordinate(address) {
-        naver.maps.Service.geocode({
-            query: address
-        }, function(status, response) {
-            if (status === naver.maps.Service.Status.ERROR) {
-                return alert('Something Wrong!');
-            }
-            if (response.v2.meta.totalCount === 0) {
-                return alert('올바른 주소를 입력해주세요.');
-            }
-            var htmlAddresses = [],
-                item = response.v2.addresses[0],
-                point = new naver.maps.Point(item.x, item.y);
-            if (item.roadAddress) {
-                htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
-            }
-            if (item.jibunAddress) {
-                htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
-            }
-            if (item.englishAddress) {
-                htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
-            }
-
-            insertAddress(item.roadAddress, item.x, item.y);
-            
-        });
-      }
-
-  //주소 검색의 이벤트
-      $('#address').on('keydown', function(e) {
-          var keyCode = e.which;
-          if (keyCode === 13) { // Enter Key
-              searchAddressToCoordinate($('#address').val());
-          }
-      });
-      $('#submit').on('click', function(e) {
-          e.preventDefault();
-          searchAddressToCoordinate($('#address').val());
-      });
-      naver.maps.Event.once(map, 'init_stylemap', initGeocoder);
+  //공유일정 조직도 script END***********************************************
 
 
-  //지도에 마커 찍기
-      function insertAddress(latitude, longitude) {
-        var map = new naver.maps.Map('map', {
-            center: new naver.maps.LatLng(longitude, latitude),
-            zoom: 50,
-            scaleControl: false,
-            logoControl: false,
-            mapDataControl: false,
-            zoomControl: false,
-            zoomControlOptions: {
-              style: naver.maps.ZoomControlStyle.SMALL,
-              position: naver.maps.Position.TOP_LEFT
-            },
-            mapTypeControl: false
-        });
-          var marker = new naver.maps.Marker({
-              map: map,
-              position: new naver.maps.LatLng(longitude, latitude),
-          });
-      }
-  //지도를 그려주는 함수
-      function selectMapList() {
-        
-        var map = new naver.maps.Map('map', {
-            center: new naver.maps.LatLng(37.3595704, 127.105399),
-            zoom: 10
-        });
-      }
-
-
-  // 지도를 이동하게 해주는 함수
-      function moveMap(len, lat) {
-        var mapOptions = {
-              center: new naver.maps.LatLng(len, lat),
-              zoom: 15
-          };
-          var map = new naver.maps.Map('map', mapOptions);
-          var marker = new naver.maps.Marker({
-              position: new naver.maps.LatLng(len, lat),
-              map: map
-          });
-      }
-//네이버 지도 api end
 </script>
     
     

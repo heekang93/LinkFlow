@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Linkflow 게시판</title>
 <style>
 .wrapper{
  min-height: 100%;
@@ -28,15 +28,15 @@
 .contentArea{ 
  width: 100%;
 }
-.contentInElement{display: flex; justify-content: space-between; margin-bottom: 30px;}
+.contentInElement{display: flex; justify-content: space-between; margin-bottom: 20px;}
 .dmovePage {
    padding: .0rem 0rem;
  }
 #boardList{text-align: center;}
 #boardList>tbody>tr:hover{cursor:pointer;}
 .LinkFlowMainContent section{
-      padding-left: 8%;
-      padding-right: 8%;
+      padding-left: 4%;
+      padding-right: 4%;
     }
 .reply_modifyinput {
   width: 80%;
@@ -63,6 +63,9 @@ i {
                         <h1 class="m-0">게시글</h1>
                     </div>
                 </div>
+                <div style="text-align:right; padding-right:24px;">
+                	<button class="btn btn-primary" onclick="javascript:history.go(-1);">목록으로</button>
+                </div>
                 <!-- /.container-fluid -->
             </section>
            
@@ -70,19 +73,18 @@ i {
             <section class="content">
                 <div class="container-fluid" style="display: flex; justify-content: center;">
                     <div class="contentArea">
+                   	 <div style="min-height: 500px; min-width: 100%; background-color:white; border : 1px solid rgb(163, 161, 161); border-radius : 10px; padding : 40px">
                         <div class="contentInElement">
                             <div class="btnArea">
+                              	<c:if test="${ board.regId == loginUser.userId or loginUser.superRight == 'Y' or loginUser.boardRight == 'Y'}">
+                                  <a href="${ contextPath }/board/modifyForm.page?no=${board.boardNo}" style="padding-right: 20px;">수정</a>
+                                  <a href="#" onclick="confirmDelete('${contextPath}/board/delete.do?no=${board.boardNo}&type=${ board.boardCategory}')">삭제</a>
+                                </c:if>
                             </div>
                             <div class="form-inline">
-                                <div class="input-group">
-                                	<c:if test="${ board.regId == loginUser.userId or loginUser.superRight == 'Y' or loginUser.boardRight == 'Y'}">
-                                    <a href="${ contextPath }/board/modifyForm.page?no=${board.boardNo}" style="padding-right: 20px;">수정</a>
-                                    <a href="#" onclick="confirmDelete('${contextPath}/board/delete.do?no=${board.boardNo}&type=${ board.boardCategory}')">삭제</a>
-                                  </c:if>
-                                </div>
+                                <div class="input-group"></div>
                             </div>
                         </div>
-                        <div style="min-height: 500px; min-width: 100%;">
                             <table id="contentArea" align="center" class="table">
                                 <tr style="font-size: larger;">
                                 <c:choose>
@@ -99,7 +101,7 @@ i {
                                 </tr>
                                 <tr>
                                     <th>작성자</th>
-                                    <td width="800">${board.regId }</td>
+                                    <td width="800">${board.userName } ${board.position }</td>
                                     <th width="150" style="text-align: center;">작성일</th>
                                     <td width="150" style="text-align: center;">${board.charDate }</td>
                                 </tr>
@@ -261,9 +263,9 @@ i {
          								 + resData[i].modCharDate
          								 + '</td><td width="150"><i class="fa-solid fa-xmark fa-xl" onclick="confirmReplyDelete(' + resData[i].replyNo +')"></i></td>';
          							}else{
-         								tr += '<td colspan="2" width="200" style="text-align: center;">'
+         								tr += '<td width="100" style="text-align: center;">'
             								 + resData[i].modCharDate
-            								 + '</td>';
+            								 + '</td>' + '<td width="150"></td>';
          							}
            						tr += "</tr>";	
             				}

@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Linkflow 프로젝트등록</title>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <style>
 	.wrapper{
@@ -56,26 +56,26 @@
 
                 <!-- Main content -->
                 <section class="content">
-                    <div class="container-fluid" style="display: flex; justify-content: center;">
+                    <div class="container-fluid">
                         <form action="${contextPath}/project/add.pj" method="post">
                             <div class="contentArea">
                                 <div class="contentInElement">
                                     <div class="btnArea">
                                         <button type="submit" class="btn btn-primary btn-sm">등록하기</button>
-                                        <button type="button" class="btn btn-danger btn-sm">등록취소</button>
+                                        <a href="${contextPath}/project/list.pj" class="btn btn-danger btn-sm">등록취소</a>
                                     </div>
                                 </div>
                                 <div style="display: flex;">
                                     <div class="card" style="min-height: 500px; min-width: 500px; width: 700px; text-align: left;">
                                         <div class="card-header" style="background-color: #007bff;">
-                                            <h4 style="color: white;">프로젝트 정보</h4>
+                                            <h4>　</h4>
                                         </div>
                                         <table class="table" style="margin-top: 50px; width: 80%; margin-left: 80px;">
                                             <tr>
                                                 <td style="margin-left: 200px; padding-top: 30px;">
                                                     <div>
                                                         <h4>프로젝트명</h4>
-                                                        <input type="text" name="proTitle" class="form-control">
+                                                        <input type="text" name="proTitle" class="form-control" required>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -92,8 +92,8 @@
                                                 <td style="margin-left: 200px;">
                                                     <div >
                                                         <h4>상태</h4>
-                                                        <input class="radioBtn" type="radio" name="proYn" value="N" checked>&nbsp;&nbsp;&nbsp;&nbsp;진행
-                                                        <input class="radioBtn" type="radio" name="proYn" value="Y" disabled style="margin-left: 20px;">&nbsp;&nbsp;&nbsp;&nbsp;완료
+                                                        <input class="radioBtn" type="radio" name="proYn" value="N" checked required>&nbsp;&nbsp;&nbsp;&nbsp;진행
+                                                        <input class="radioBtn" type="radio" name="proYn" value="Y" disabled style="margin-left: 20px;" required>&nbsp;&nbsp;&nbsp;&nbsp;완료
                                                     </div>
                                                 </td>
                                             </tr>
@@ -101,11 +101,11 @@
                                                 <td>
                                                     <div>
                                                         <h4>시작일</h4>
-                                                        <input type="date" name="startDate" class="form-control">
+                                                        <input type="date" name="startDate" class="form-control" required>
                                                     </div>
                                                     <div style="padding-bottom: 100px; padding-top: 70px;">
                                                         <h4>종료일</h4>
-                                                        <input type="date" name="endDate" class="form-control">
+                                                        <input type="date" name="endDate" class="form-control" required>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -120,7 +120,7 @@
                                                 <td style="margin-left: 200px;">
                                                     <div>
                                                         <h4>고객사</h4>
-                                                        <input type="text" name="client" class="form-control">
+                                                        <input type="text" name="client" class="form-control" required>
                                                     </div>
                                                 </td>
                                             </tr>

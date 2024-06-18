@@ -1,5 +1,6 @@
 package com.mm.linkflow.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -131,7 +132,55 @@ public class BookingDao {
 		int limit = pi.getBoardLimit();
 		int offset = (pi.getCurrentPage()-1)*limit;
 		RowBounds rowBounds = new RowBounds(offset,limit);
-		return sql.selectList("bkMapper.selectBkWaitList",rowBounds);
+		return sql.selectList("bkMapper.selectBkWaitList",null, rowBounds);
+	}
+
+	public int selectSupStatusCount(Map<String, String> search) {
+		return sql.selectOne("bkMapper.selectSupStatusCount",search);
+	}
+
+	public List<BookingDto> selectSupStatusList(Map<String, String> search, PageInfoDto pi) {
+		int limit = pi.getBoardLimit();
+		int offset = (pi.getCurrentPage()-1 )* limit;
+		RowBounds rowBounds = new RowBounds(offset,limit);
+		return sql.selectList("bkMapper.selectSupStatusList",search,rowBounds);
+	}
+
+	public int updateSupBkConfirm(Map<String, String> bk) {
+		return sql.update("bkMapper.updateSupBkConfirm",bk);
+	}
+
+	public int updateSupBkReturn(Map<String, String> bk) {
+		return sql.update("bkMapper.updateSupBkReturn",bk);
+	}
+
+	public List<AssetsDto> modalSetDtoList() {
+		return sql.selectList("bkMapper.modalSetDtoList");
+	}
+
+	public int insertBooking(Map<String, String> bk) {
+		return sql.insert("bkMapper.insertBooking",bk);
+	}
+
+	public List<BookingDto> selectRoomWaitList() {
+		return sql.selectList("bkMapper.selectRoomWaitList");
+	}
+
+	public int updateRoomBooking(Map<String, String> bk) {
+		return sql.update("bkMapper.updateRoomBooking",bk);
+	}
+
+	public List<BookingDto> selectRoomBooking(Map<String,Object> rooms) {
+		return sql.selectList("bkMapper.selectRoomBooking",rooms);
+	}
+
+	public int autoRoomBkEnd() {
+		
+		return sql.update("bkMapper.autoRoomBkEnd");
+	}
+
+	public int autoCarBkUse() {
+		return sql.update("bkMapper.autoCarBkUse");
 	}
 
 }

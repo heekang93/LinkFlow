@@ -13,11 +13,15 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class DailyDto {
+public class DailyDto extends CommonDto {
 	private int daiNo;
 	private int proNo;
 	private String daiContent;
 	private String daiAns;
-	private Date ansDate;
+	private String ansDate;
 	private String ansWriter;
+	private String proTitle;
+	private String userName;
+	private String deptCode;
+	private String client;
 }

@@ -57,6 +57,12 @@
         display: flex;
         align-items: center; /* 모든 요소를 수직으로 중앙 정렬합니다. */
     }
+    
+    tr > td { cursor: pointer; }
+    
+    .content-header { margin-bottom: 50px; }
+    
+    #pagingArea{ margin-top: 30px; }
 </style>
 </head>
 <body>
@@ -77,11 +83,11 @@
                 <div class="search d-flex justify-content-end"> 
 	                  <input type="hidden" name="page" value="1">
 	                  <select name="condition" id="bottom-menu" class="form-control bottom-menu" style="width: 150px;">
-	                    <option value="01">대기</option>
+	                    <!-- <option value="01">대기</option>
 	                    <option value="02">예정</option>
-	                    <option value="03">확인</option>
+	                    <option value="03">확인</option> -->
 	                    <option value="04">진행</option>
-	                  </select>
+	                  </select> 
 	                  <div class="input-group col-4" style="height: 100%;">
 	                    <input type="search" class="form-control" name="keyword" value="${search.keyword}" placeholder="제목을 입력해주세요">
 	                    <div class="input-group-append">

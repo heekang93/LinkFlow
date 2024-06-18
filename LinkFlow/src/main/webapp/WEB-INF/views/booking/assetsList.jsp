@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>my booking list</title>
+<title>Linkflow 시설/비품</title>
 
 <style>
 .LinkFlowMainSection {
@@ -23,7 +23,10 @@
 	min-height: 400px;
 	padding: 30px;
 }
-
+.wrapper{
+ min-height: 100%;
+ width: 100%;
+}
 /* 게시판 */
 .card-title, .card-tools {
 	padding: 10px;
@@ -63,6 +66,7 @@
 	padding-left: 25px;
 	font-size: small;
 	padding-top: 15px;
+	
 }
 
 .md-select {
@@ -137,6 +141,7 @@
 .ass-drop {
 	padding-top: 15px;
 	padding-bottom: 15px;
+	padding-left:45px;
 }
 
 .ass-drop p {
@@ -147,20 +152,10 @@
 .ass-drop select {
 	text-align: center;
 }
-/* 체크박스 
-input[type="checkbox"] {
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-	width: 15px;
-	height: 15px;
-	border-radius: 50%;
-	border: 2px solid #ccc;
+#modalTitle{
+	padding-bottom:5px;
 }
 
-input[type="checkbox"]:checked {
-	background-color: #007bff;
-}*/
 </style>
 
 </head>
@@ -204,7 +199,7 @@ input[type="checkbox"]:checked {
 		                            
 		                            <input type="text" id="keyword" class="form-control float-right" name="keyword" placeholder="Search">
 		                            <div class="input-group-append">
-		                                <button type="submit" class="btn btn-default" onclick="searchAssets();">
+		                                <button type="submit" class="btn btn-default" onclick="searchAssets(1);">
 		                                    <i class="fas fa-search"></i>
 		                                </button>
 		                            </div>
@@ -234,10 +229,10 @@ input[type="checkbox"]:checked {
 				                              <td>${ ass.subName }</td>
 				                              <td>${ ass.assetsName }</td>
 				                              <td>
-				                                  <span data-toggle="modal" data-target="#acc-update" id="assModify" 
-				                                  		onclick="modalType('${ass.assetsNo }','${ ass.mainName }','${ ass.subName }','${ ass.assetsName }');">수정</span>
+				                                  <a data-toggle="modal" data-target="#ass-update" id="assModify" 
+				                                  		onclick="modalType('${ass.assetsNo }','${ ass.mainName }','${ ass.subName }','${ ass.assetsName }');">수정</a>
 				                                  |
-				                                  <span onclick="assDel(this);" data-assNo="${ass.assetsNo}">삭제</span>
+				                                  <a data-assNo="${ass.assetsNo}" onclick="assDel('${ass.assetsNo}');">삭제</a>
 				                              </td>
 				                          </tr>
 			                          </c:forEach>
@@ -251,11 +246,11 @@ input[type="checkbox"]:checked {
   				</div>
 
 				<div class="text-right">
-	            	<button class="btn bg-gradient-secondary" data-toggle="modal" data-target="#acc-update" id="assInsert" onclick="modalType();">자산 추가</button>
+	            	<button class="btn bg-gradient-secondary" data-toggle="modal" data-target="#ass-update" id="assInsert" onclick="modalType();">자산 추가</button>
 	            </div>
 			</div>
              <!-- 자산 추가/수정 모달 -->
-             <div class="modal fade" id="acc-update">
+             <div class="modal fade" id="ass-update">
                  <div class="modal-dialog">
                      <div class="modal-content">
                      <form id="updateAss" action="" method="post">
@@ -264,18 +259,18 @@ input[type="checkbox"]:checked {
                          </div>
                          <div class="bk-modal ass-drop">
                              <p>카테고리</p>&nbsp;&nbsp;
-                             <select id="assMain" style="width: 80px;" name="updateMainCode" onchange="changeMod();">
-                                 <option id="roomOption" value="002-">시설</option>
-                                 <option id="suppliesOption" value="003-">비품</option>
+                             <select id="assMain" style="width: 80px;" name="updateMainCode" onchange="changeMod();" class="form-control">
+                                 <option id="ass-inRoom" value="002-">시설</option>
+                                 <option id="ass-inSup" value="003-">비품</option>
                              </select>
                          </div>
                          <div class="bk-modal ass-drop">
                              <p>자원 종류</p>&nbsp;&nbsp;
-                             <select id="roomSub" style="width: 100px;">
+                             <select id="roomSub" name="roomSubName" style="width: 100px;" class="form-control">
                                  <option id="회의실" value="회의실">회의실</option>
                                  <!-- 비품일때 -->
-                                 </select>
-                             <select id="supSub" name="subName" style="width: 100px; display:none;">
+                             </select>
+                             <select id="supSub" name="subName" style="width: 100px; display:none;" class="form-control">
                                  <option id="노트북" value="노트북">노트북</option>
                                  <option id="차량" value="차량">차량</option>
                                  <option id="키보드" value="키보드">키보드</option>
@@ -284,7 +279,7 @@ input[type="checkbox"]:checked {
                          </div>
                          <div class="bk-modal ass-drop">
                              <p>상품명 </p>&nbsp;&nbsp;
-                             <input id="assName" type="text" name="assetsName">
+                             <input id="assName" type="text" name="assetsName" class="form-control" style="width: 190px;">
                          </div>
  
                          <div class="modal-footer justify-content-between">
@@ -301,16 +296,16 @@ input[type="checkbox"]:checked {
 
 		<div class="pagination" id="pageArea" style="display: flex; justify-content: center;">
 			<ul class="pagination">
-				<li class="page-item" ${pi.currentPage ==1 ? 'disabled' : '' }>
-					<a class="page-link" href="${contetxtPath }/booking/ass.list?page=${pi.currentPage -1}">&laquo;</a>
+				<li class="page-item ${pi.currentPage ==1 ? 'disabled' : '' }">
+					<a class="page-link" href="${contextPath }/booking/ass.list?page=${pi.currentPage -1}">&laquo;</a>
 				</li>
 				<c:forEach var="p" begin="${pi.startPage }" end="${pi.endPage }">
-					<li class="page-item" ${ pi.currentPage == p ? 'disabled' : '' }>
+					<li class="page-item ${ pi.currentPage == p ? 'disabled' : '' }">
 						<a class="page-link" href="${contextPath }/booking/ass.list?page=${p}">${p }</a>
 					</li>
 				</c:forEach>
-				<li class="page-item" ${pi.currentPage == pi.maxPage ? 'disabled' : '' }>
-					<a class="page-link" href="${contetxtPath }/booking/ass.list?page=${pi.currentPage +1}">&raquo;</a>
+				<li class="page-item ${pi.currentPage == pi.maxPage ? 'disabled' : '' }">
+					<a class="page-link" href="${contextPath }/booking/ass.list?page=${pi.currentPage +1}">&raquo;</a>
 				</li>
 			</ul>
 		</div>
@@ -325,35 +320,31 @@ input[type="checkbox"]:checked {
 	<script>
 			
 		$(document).ready(function () {
-	        $('.dropdown-item').click(function () {
-	            var selectedText = $(this).find('.spanCss').text();
-	            $('.resultArea').text(selectedText);
-	        });
-	        
-	        // URL에서 success 파라미터를 확인하고 알림 표시
-            const urlParams = new URLSearchParams(window.location.search);
-            const ain = urlParams.get('ain');
-            /* const amod = urlParams.get('amod'); */
-            if (ain === 'true') {
-                Swal.fire('성공', '추가되었습니다.', 'success');
-            }/*  else if(amod === 'true'){
-            	Swal.fire('성공', '수정되었습니다.', 'success');
-            } */
-	    });
+		    // URL에서 success 파라미터를 확인하고 알림 표시
+		    const urlParams = new URLSearchParams(window.location.search);
+		    const ain = urlParams.get('ain');
+		    const amod = urlParams.get('amod');
+		    if (ain === 'true') {
+		        Swal.fire('성공', '추가되었습니다.', 'success');
+		    } 
+		    if (amod && amod === 'true'){ 
+		        Swal.fire('성공', '수정되었습니다.', 'success');
+		    } 
+		});
 		
-		function searchAssets() { // 검색
+		function searchAssets(num) { // 검색
 		    let mainName = document.getElementById('mainName').value;
 		    let subName = '';
 
 		    if (mainName === '002-') {
-		        let roomSubElement = document.getElementById('room-sub');
-		        if (roomSubElement) {
-		            subName = roomSubElement.value;
+		        let roomSub = document.getElementById('room-sub');
+		        if (roomSub) {
+		            subName = roomSub.value;
 		        }
 		    } else if (mainName === '003-') {
-		        let supSubElement = document.getElementById('sup-sub');
-		        if (supSubElement) {
-		            subName = supSubElement.value;
+		        let supSub = document.getElementById('sup-sub');
+		        if (supSub) {
+		            subName = supSub.value;
 		        }
 		    }
 
@@ -365,13 +356,14 @@ input[type="checkbox"]:checked {
 		        data: {
 		            mainName: mainName,
 		            subName: subName,
-		            keyword: keyword
+		            keyword: keyword,
+		            page:num
 		        },
 		        success: function (searchResult) {
 		            let table = "";
 		            let list = searchResult.assList;
 		            let page = "";
-				  	let pi = result.pi;
+				  	let pi = searchResult.pi;
 
 		            for (let i = 0; i < list.length; i++) {
 		                table += "<tr>"
@@ -379,71 +371,68 @@ input[type="checkbox"]:checked {
 		                       + "<td>" + list[i].subName + "</td>"
 		                       + "<td>" + list[i].assetsName + "</td>"
 		                       + "<td>"
-		                       + "<span data-toggle=\"modal\" data-target=\"#acc-update\" id=\"assModify\" onclick=\"modalType("
-		                       + list[i].assetsNo +","+ list[i].mainName+","+ list[i].subName+","+ list[i].assetsName+ ")\">수정</span>"
+		                       + "<a data-toggle=\"modal\" data-target=\"#ass-update\" id=\"assModify\" onclick=\"modalType('"
+		                       + list[i].assetsNo +"','"+ list[i].mainName+"','"+ list[i].subName+"','"+ list[i].assetsName+ "')\">수정</a>"
 		                       + " | "
-		                       + "<span onclick=\"assDel(" + list[i].assetsNo + ");\">삭제</span>"
+		                       +  "<a data-assNo=\"" + list[i].assetsNo + "\" onclick='assDel(\"" + list[i].assetsNo + "\");'>삭제</a>"
 		                       + "</td></tr>";
+		                       console.log(list[i].assetsNo);
 		            }
 		            
-					page +="<li class=\"page-item "+( pi.currentPage ==1 ? 'disabled' : '') +"><a class=\"page-link\" href=\"${contetxtPath }/booking/ass.search?page="+pi.currentPage -1+"\">&laquo;</a></li>";
-					
-					for(let i=pi.startPage; i<pi.endPage; i++){
-						page += "<li class=\"page-item " +( pi.currentPage == p ? 'disabled' : '' )+"><a class=\"page-link\" href=\"${contextPath }/booking/ass.search?page="+i+">"+i +"</a></li>";
+		            
+		            page += "<li class=\"page-item " + (pi.currentPage == 1 ? 'disabled' : '') + "\"><a class=\"page-link\" onclick=\"searchAssets(" + (pi.currentPage - 1) + ");\">&laquo;</a></li>";
+
+					for (let i = pi.startPage; i <= pi.endPage; i++) {
+					    page += "<li class=\"page-item " + (pi.currentPage == i ? 'disabled' : '') + "\"><a class=\"page-link\" onclick=\"searchAssets(" + i + ");\"> "+ i + "</a></li>";
 					}
-					page += "<li class=\"page-item " + (pi.currentPage == pi.maxPage ? 'disabled' : '')+"><a class=\"page-link\" href=\"${contetxtPath }/booking/ass.search?page="+pi.currentPage +1+">&raquo;</a></li>";
-					
+
+					page += "<li class=\"page-item " + (pi.currentPage == pi.maxPage ? 'disabled' : '') + "\"><a class=\"page-link\" onclick=\"searchAssets(" + (pi.currentPage + 1) + ");\">&raquo;</a></li>";
+				
 		            $("#listTable").html(table);
 		            $("#pageArea ul").html(page);
 		        }
 		    });
 		}
 	
-		function modalType(no,main,sub,ass){
-			if(no != null){
-				/* document.getElementById('assMain').disabled = false; */
-				document.getElementById('modalTitle').innerText = "자산 수정";
-				var room = document.getElementById('roomSub');
+		function modalType(no, main, sub, ass) {
+		    
+		    if (no != null) {
+		        document.getElementById('modalTitle').innerText = "자산 수정";
+		        var room = document.getElementById('roomSub');
 		        var supplies = document.getElementById('supSub');
-		        
-				if (main === "비품") {
-					console.log("왜안됨");
-					document.getElementById('roomOption').selected = false;
-					document.getElementById('suppliesOption').selected = true;
+
+		        if (main === "비품") {
+		            document.getElementById('ass-inRoom').selected = false;
+		            document.getElementById('ass-inSup').selected = true;
 		            room.style.display = 'none';
 		            supplies.style.display = 'block';
-		        } else if(main === "시설"){
-		        	console.log("왜안되냐고 ");
-		        	document.getElementById('suppliesOption').selected = false;
-		            document.getElementById('roomOption').selected = true;
-		            
+		        } else if (main === "시설") {
+		            document.getElementById('ass-inSup').selected = false;
+		            document.getElementById('ass-inRoom').selected = true;
+
 		            room.style.display = 'block';
 		            supplies.style.display = 'none';
-		        	
+
 		        }
-				/* document.getElementById('assMain').disabled = true; */
 		        document.getElementById(sub).selected = true;
 		        document.getElementById('assName').value = ass;
-		     	// hidden input 추가
+		        // hidden input 추가
 		        var hiddenInput = document.createElement("input");
 		        hiddenInput.setAttribute("type", "hidden");
 		        hiddenInput.setAttribute("name", "assetsNo");
 		        hiddenInput.setAttribute("value", no);
 		        document.getElementById("updateAss").appendChild(hiddenInput);
-		        
-		        document.getElementById('updateAss').action= "${contextPath}/booking/ass.mod";
-		   
-			}else{
-				 // assName 요소의 값을 비우기
+		        document.getElementById('updateAss').action = "${contextPath}/booking/ass.mod";
+
+		    } else {
+		        // assName 비우기
 		        document.getElementById('assName').value = '';
 		        // modalTitle 초기화
 		        document.getElementById('modalTitle').innerText = "자산 추가";
-		        document.getElementById("updateAss").action= " ";
-				   
+		        document.getElementById("updateAss").action = " ";
 
-		        /* document.getElementById('assMain').disabled = false; */
-		        document.getElementById('roomOption').selected = false;
-		        document.getElementById('suppliesOption').selected = false;
+		        document.getElementById('ass-inRoom').selected = false;
+		        document.getElementById('ass-inSup').selected = false;
 
 		        document.getElementById('roomSub').style.display = 'block';
 		        document.getElementById('supSub').style.display = 'none';
@@ -452,14 +441,13 @@ input[type="checkbox"]:checked {
 		        if (hiddenInput) {
 		            hiddenInput.parentNode.removeChild(hiddenInput);
 		        }
-		        // action 설정
-				document.getElementById('updateAss').action= "${contextPath}/booking/ass.in";
-				   
-			}
+		        document.getElementById('updateAss').action = "${contextPath}/booking/ass.in";
+
+		    }
 		}
 		
 	    function assDel(assNo) { // 삭제 
-	    	let assetsNo= assNo.getAttribute('data-assNo');
+	    	let assetsNo= assNo;
 	    
 	        Swal.fire({
 	            //   title: '글을 삭제하시겠습니까???',
@@ -471,41 +459,51 @@ input[type="checkbox"]:checked {
 	            cancelButtonText: '취소',
 	            confirmButtonText: '삭제'
 	        }).then((result) => {
-	            if (result.value) {
-	                
-	            	$.ajax({
-	            		url:'${contextPath}/booking/ass.del',
-	            		type:'get',
-						data:{
-							assetsNo:assetsNo
-						},success:function(result){
-							if(result > 0 )
-								Swal.fire('성공', '삭제되었습니다.', 'success');
-								window.location.replace('${contextPath}/booking/ass.list');
-						}            		
+	        	if (result.value) {
+	                $.ajax({
+	                    url: '${contextPath}/booking/ass.del',
+	                    type: 'get',
+	                    data: {
+	                        assetsNo: assNo
+	                    },
+	                    success: function(result) {
+	                       
+                        	if (result > 0) {
+                                Swal.fire({
+                                    title: '성공',
+                                    text: '삭제되었습니다.',
+                                    icon: 'success',
+                                    confirmButtonText: '확인'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+	                       			 window.location.replace('${contextPath}/booking/ass.list');
+                                    }
+                                });
+	                           
+	                        }
+	                    }
 	            	})
 	            }
 	        })
 	    }
 	    
-	    function changeMod() { 
-	        var selectedValue = document.getElementById('assMain').value;
+	    function changeMod() { // 모달창 드롭박스 체인지 
+	        var selectMain = document.getElementById('assMain').value;
 	        var room = document.getElementById('roomSub');
 	        var supplies = document.getElementById('supSub');
 	     
-	        if (selectedValue === '002-') {
+	        if (selectMain === '002-') {
 	            room.style.display = 'block';
 	            supplies.style.display = 'none';
-	            document.getElementById('roomSub').setAttribute('name', 'subName');
 	            
-	        } else if (selectedValue === '003-') {
+	        } else if (selectMain === '003-') {
 	            room.style.display = 'none';
 	            supplies.style.display = 'block';
-	            document.getElementById('supSub').setAttribute('name', 'subName');
+	           
 	        }
 	    }
 	    
-	    function changeSub() {
+	    function changeSub() { // 검색 폼 드롭박스 체인지 
 	        var selectedValue = document.getElementById('mainName').value;
 	        var room = document.getElementById('room-sub');
 	        var supplies = document.getElementById('sup-sub');

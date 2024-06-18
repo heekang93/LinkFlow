@@ -106,14 +106,14 @@
 		  ,NVL(to_char(bk_start_dt,'YYYY/MM/DD'), '-') AS bk_start_date
 		  ,NVL(to_char(bk_start_dt,'hh24:mi'), ' ') AS bk_start_time
 		  ,NVL(to_char(bk_end_dt,'hh24:mi'), ' ') AS bk_end_time
-		  ,status
+		  ,b.status
      from tb_booking b
      join tb_assets a using (assets_no)
      join tb_common c using (main_code)
     where booking_id = #{userId}
       and a.sub_code= c.sub_code
       and b.del_yn = 'N'
-
+	order by booking_no desc
 </select>
 
 <select id="selectDetailAssList" resultMap="assResult">
@@ -125,6 +125,7 @@
        and c.sub_name = #{subName}
        and c.del_yn = 'N'
        and a.use_yn = 'Y'
+       and a.del_yn = 'N'
 </select>
 
 <select id="selectDetailMyBk" resultMap="bkResult">
@@ -138,13 +139,14 @@
 		  ,sub_name
 		  ,assets_name
 		  ,bk_content
-		  ,NVL(rej_content,'') AS rejContent
+		  ,NVL(rej_content,'') AS rej_content
 	  from tb_booking b
 	  join tb_assets a using (assets_no)
    	  join tb_common c using (main_code)
 	 where booking_no = #{ bkNo }
 	   and a.sub_code= c.sub_code
        and b.del_yn = 'N'
+       
 </select>
 
 <update id="modifyBk">
@@ -192,6 +194,7 @@
 	   and c.main_code = '003-'
 	   </when>
 	   </choose>
+	   order by booking_no desc
 	   
 </select>
 
@@ -225,6 +228,7 @@
 	   and c.main_code = '003-'
 	   </when>
 	   </choose>
+	   order by booking_no desc
 </select>
 
 <select id="selectAssCount" resultType="_int">
@@ -288,6 +292,7 @@
 	<if test='keyword != null'>
 	  and assets_name like '%'||#{keyword}||'%'
 	</if>
+	 order by a.assets_no desc
 </select>
 
 <update id="deleteAssets">
@@ -310,11 +315,12 @@
 	 values
 	 	   (
 	 		'ASS_'|| LPAD(SEQ_ASSNO.NEXTVAL, 3, '0')
-	 	   ,#{mainCode}
-	 	   ,(select sub_code
+	 	   ,#{ass.mainCode}
+	 	   ,( select sub_code
 	 	   		from tb_common
-	 	   	   where main_code = #{mainCode}	
+	 	   	   where main_code = #{ass.mainCode}	
 	 	   	     and sub_name = #{ass.subName}
+	 	   	   group by sub_code
 	 	   	 )
 	 	   	,#{ass.assetsName}
 	 	   	,#{userId}
@@ -327,11 +333,13 @@
 	update tb_assets
 	   set sub_code = (select sub_code
 			 	   		from tb_common
-			 	   	   where main_code = #{mainCode}	
+			 	   	   where main_code = #{ass.mainCode}	
 			 	   	     and sub_name = #{ass.subName}
+			 	   	  group by sub_code
 			 	   	   ),
 			assets_name = #{ass.assetsName},
-			mod_id = #{userId}
+			mod_id = #{userId},
+			main_code = #{ass.mainCode}
 	where assets_no = #{ ass.assetsNo}
 			
 </update>
@@ -349,6 +357,7 @@
 <select id="selectBkWaitList" resultMap="bkResult">
 	select 
 		   booking_no
+		  ,booking_id
 		  ,m.user_name
           ,d.dept_title
 		  ,b.assets_no
@@ -357,7 +366,7 @@
 		  ,sub_name
 		  ,NVL(to_char(bk_start_dt,'YYYY/MM/DD'), '-') AS bk_start_date
 		  ,NVL(to_char(bk_end_dt,'YYYY/MM/DD'), ' ') AS bk_end_date
-		  ,to_char(b.mod_date,'YYYY/MM/DD') AS enr_date
+		  ,to_char(b.mod_date,'YYYY/MM/DD hh24:mi:ss') AS enr_date
 	 from tb_booking b
 	 join tb_member m on (m.user_id = b.booking_id)
      join tb_dept d on (m.dept_code = d.dept_code)
@@ -368,7 +377,265 @@
 	  and a.sub_code = c.sub_code
 	  and b.del_yn = 'N'
 	  and a.del_yn = 'N'
-	order by booking_no desc
+	order by b.mod_date asc
 </select>
 
+<select id="selectSupStatusCount" resultType="_int">
+	select count(*)
+	  from tb_booking b
+	  join tb_assets a on (a.assets_no = b.assets_no)
+	  join tb_common c on (a.main_code = c.main_code)
+	  join tb_member m on (m.user_id = b.booking_id)
+	where b.status not in ('WAI','CAN')
+	  and b.del_yn = 'N'
+	  and a.del_yn = 'N'
+	  and a.sub_code = c.sub_code
+	  and a.main_code = '003-'
+	  <choose>
+	  <when test='(keyword != "" or keyword != null) and condition eq "subName"'>
+	  and c.sub_name like '%'|| #{keyword} || '%'
+	  </when>
+	  <when test='(keyword != "" or keyword != null) and condition eq "assetsName"'>
+	  and a.assets_name like '%'|| #{keyword} || '%'
+	  </when>
+	  <when test='(keyword != "" or keyword != null) and condition eq "userName"'>
+	  and user_name like '%'|| #{keyword} || '%'
+	  </when>
+	  </choose>
+	  order by booking_no desc
+</select>
+
+<select id="selectSupStatusList" resultMap="bkResult">
+	select 
+		   booking_no
+		  ,m.user_name
+          ,d.dept_title
+		  ,b.assets_no
+		  ,bk_content
+		  ,assets_name
+		  ,sub_name
+		  ,b.status
+		  ,rej_content
+		  ,NVL(to_char(bk_start_dt,'YYYY/MM/DD'), '-') AS bk_start_date
+		  ,NVL(to_char(bk_end_dt,'YYYY/MM/DD'), ' ') AS bk_end_date
+		  ,to_char(b.mod_date,'YYYY/MM/DD') AS enr_date
+	 from tb_booking b
+	 join tb_member m on (m.user_id = b.booking_id)
+     join tb_dept d on (m.dept_code = d.dept_code)
+	 join tb_assets a on (a.assets_no = b.assets_no)
+	 join tb_common c on (a.main_code = c.main_code)
+	where b.status not in ('WAI','CAN')
+	  and a.main_code = '003-'
+	  and a.sub_code = c.sub_code
+	  and b.del_yn = 'N'
+	  and a.del_yn = 'N'
+	  <choose>
+	  <when test='(keyword != "" or keyword != null) and condition eq "subName"'>
+	  and c.sub_name like '%'|| #{keyword} || '%'
+	  </when>
+	  <when test='(keyword != "" or keyword != null) and condition eq "assetsName"'>
+	  and a.assets_name like '%'|| #{keyword} || '%'
+	  </when>
+	  <when test='(keyword != "" or keyword != null) and condition eq "userName"'>
+	  and user_name like '%'|| #{keyword} || '%'
+	  </when>
+	  </choose>
+	order by status_date desc
+</select>
+
+<update id="updateSupBkConfirm">
+	update tb_booking
+	   set reg_id = #{userId},
+	   	   mod_id = #{userId},
+	   	   status_date = sysdate,
+	  <choose>
+          <when test='rejContent != "" and rejContent != null'> 
+          status = 'REJ' ,
+          rej_content = #{rejContent}
+          </when>
+          <when test='subName == "차량"'>
+          status='COM'
+          </when>
+          <otherwise>
+          status = 'USE' 
+		  </otherwise>
+       </choose>
+	   	  
+	 where booking_no = #{bookingNo}
+</update>
+
+<update id="updateSupBkReturn">
+	update tb_booking
+	   set mod_id = #{userId},
+	   	   status_date = sysdate,
+	   	   status = 'END'
+	where booking_no = #{bookingNo}
+</update>
+
+<insert id="insertBooking">
+	insert
+	  into tb_booking
+	  		(
+	  		 booking_no
+	  		,booking_id
+	  		,dept_code
+	  		,assets_no
+	  		,bk_content
+	  		,bk_start_dt
+	  		,bk_end_dt
+	  		,status
+	  		,reg_date
+	  		,mod_date
+	  		,status_date
+	  		)
+	  values
+	  		(
+	  		 'BK_'|| LPAD(SEQ_BKNO.NEXTVAL, 3, '0')
+	  		,#{userId}
+	  		,( select dept_code
+	  		     from tb_member
+	  		    where user_id = #{userId}
+	  		    group by dept_code
+	  		  )
+	  		 ,#{assetsNo}
+	  		 ,#{bkContent}
+	  		 <choose>
+	  		 <when test='mainName == "시설"'>
+	         , TO_DATE(#{bkStartDate} || #{bkStartTime}, 'YYYY/MM/DD HH24:MI')
+	         , TO_DATE(#{bkStartDate}|| #{bkEndTime}, 'YYYY/MM/DD HH24:MI')
+	         
+		     </when>
+		     <when test='subName == "차량"'>
+	         , TO_DATE(#{bkStartDate}, 'YYYY/MM/DD')
+	         , TO_DATE(#{bkEndDate}, 'YYYY/MM/DD')
+		    </when>
+	  		 <otherwise>
+	  		 ,null
+	  		 ,null
+	  		 </otherwise>
+	  		 </choose>
+	  		 ,'WAI'
+	  		 ,sysdate
+	  		 ,sysdate
+	  		 ,sysdate
+	  		)
+</insert>
+
+<select id="modalSetDtoList" resultMap="assResult">
+	select 
+			assets_no
+		  , assets_name
+		  , sub_name
+		  , main_name
+	 from tb_assets a
+	 join tb_common c on a.main_code = c.main_code
+	where a.del_yn ='N'
+	  and a.sub_code = c.sub_code
+	  and a.use_yn = 'Y'
+	order by a.assets_no desc
+</select>
+
+<select id="selectRoomWaitList" resultMap="bkResult">
+	select 
+		   booking_no
+		  ,booking_id
+		  ,user_name
+		  ,dept_title
+		  ,to_char(bk_start_dt, 'yyyy/mm/dd') as bk_start_date
+		  ,to_char(bk_start_dt, 'hh24:mi') as bk_start_time
+		  ,to_char(bk_end_dt, 'hh24:mi') as bk_end_time
+		  ,to_char(b.mod_date, 'yy/mm/dd hh24:mi:ss') as enr_date
+		  ,bk_content
+		  ,a.assets_name
+	  from tb_booking b
+	  join tb_assets a on (a.assets_no = b.assets_no)
+	  join tb_member m on (booking_id = user_id)
+	  join tb_dept d on (m.dept_code = d.dept_code)
+	 where b.del_yn = 'N'
+	   and b.status = 'WAI'
+	   and a.main_code = '002-'
+	 order by b.mod_date asc
+</select>
+
+<update id="updateRoomBooking">
+	update tb_booking
+	  set
+	      <choose>
+	      <when test='rejContent !="" and rejContent != null'>
+	      status = 'REJ',
+	      rej_content = #{rejContent}
+	      </when>
+	      <otherwise>
+	      status = 'COM'
+	      </otherwise>
+	      </choose>
+	      , status_date = sysdate
+	      , reg_id = sysdate
+	      , mod_id = #{userId}
+	where booking_no = #{bookingNo}
+</update>
+
+<select id="selectRoomBooking" resultMap="bkResult">
+	select 
+		   assets_name
+		  ,booking_no
+		  ,booking_id
+		  ,NVL(to_char(bk_start_dt,'YYYY-MM-DD'), '-') AS bk_start_date
+		  ,NVL(to_char(bk_start_dt,'hh24:mi'), ' ') AS bk_start_time
+		  ,NVL(to_char(bk_end_dt,'hh24:mi'), ' ') AS bk_end_time
+	 from tb_booking b
+	 join tb_assets a on (a.assets_no = b.assets_no)
+	where b.status in ('COM','END')
+	  and b.del_yn = 'N'
+	  <choose>
+	  <when test='A == null and A == ""'>
+	  and assets_name in (#{B}, #{C})
+	  </when>
+	  <when test='B == null and B == ""'>
+	  and assets_name in (#{A}, #{C})
+	  </when>
+	  <when test='C == null and C == ""'>
+	  and assets_name in (#{B}, #{A})
+	  </when>
+	  <when test='A == null and A == "" and B == null and B == ""'>
+	  and assets_name = #{C}
+	  </when>
+	  <when test='A == null and A == "" and C == null and C == ""'>
+	  and assets_name = #{B}
+	  </when>
+	  <when test='C == null and C == "" and B == null and B == ""'>
+	  and assets_name = #{A}
+	  </when>
+	  <when test='A == null and A == "" and B == null and B == "" and C == null and C == ""'>
+	  </when>
+	  <otherwise>
+	  and assets_name in (#{A}, #{B}, #{C})
+	  </otherwise>
+	  </choose>
+</select>
+
+<update id="autoRoomBkEnd">
+<![CDATA[
+	update tb_booking
+	   set status = 'END',
+	   	   status_date = sysdate
+	 where status = 'COM'
+	   and bk_end_dt <= sysdate
+	 ]]>
+</update>
+
+<update id="autoCarBkUse">
+<![CDATA[
+	update tb_booking
+	   set status = 'USE',
+	   	   status_date = sysdate
+	 where status = 'COM'
+	   and assets_no in (select assets_no
+	   					   from tb_assets a
+	   					   join tb_common c on (a.main_code = c.main_code)
+	   					  where c.sub_col = 'CAR'
+	   					 )
+	   and bk_start_dt <= sysdate
+	   ]]>
+</update>
 </mapper>

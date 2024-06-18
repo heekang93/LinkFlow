@@ -266,7 +266,7 @@
       padding: 0px 0px 0px 0px !important;
     }
 
-    
+    .card-body > .row { align-items: center; justify-content: center; }
 </style>
 
 
@@ -298,7 +298,7 @@
 	                    <div class="contentInElement">
 	                        <div class="btnArea">
                             <button type="submit" id="draftingBtn" class="btn btn-primary btn-sm">기안하기</button>
-                            <button class="btn btn-secondary btn-sm">임시저장</button>  
+                            <!-- <button class="btn btn-secondary btn-sm">임시저장</button> -->  
                           </div>
 
                           <!-- 기본 설정-->
@@ -310,6 +310,7 @@
                                     <th class="table-active">문서 종류</th>
                                     <td>
                                       <select class="form-control documentTypeSelect" name="edFormCode" id="documentTypeSelect">
+                                        <option value="">양식 선택</option>
                                         <c:forEach var="fr" items="${list}" varStatus="num">
 																	       <option value="${fr.edFrCode}">${fr.edFrName}</option>
 																	    	</c:forEach>
@@ -351,7 +352,9 @@
                               <table class="table table-bordered" style="margin-top: 10px;">
                                 <tr>
                                   <th rowspan="2" class="table-active" style="text-align: center; vertical-align: middle;" width="100">결재</th>
-                                  <th class="table-active" style="text-align: center; vertical-align: middle;">${loginUser.userName}</th>
+                                  <th class="table-active" style="text-align: center; vertical-align: middle;">
+                                  <div><input type="hidden" name="edocHistList[0].userId" value="${loginUser.userId}">${loginUser.userName}</div>
+                                  </th>
                                   <th class="table-active" style="text-align: center; vertical-align: middle;" id="approvalSelectedArea1"></th>
                                 
                                   <th class="table-active" style="text-align: center; vertical-align: middle;" id="approvalSelectedArea2"></th>
@@ -414,7 +417,7 @@
             <div class="row" style="min-width: 1400px;">
               <div class="card-body">
 
-                  <form action="xxxxxxx" method="post">
+                  <!-- <form action="xxxxxxx" method="post"> -->
                    <div class="searchUser">
 
                      <div class="col-md-3" style="margin-top: 15px;">
@@ -422,14 +425,14 @@
                          <div class="input-group" style="width: 800px;">
                              <input type="search" class="form-control" id="searchInput" placeholder="사원명이나 조직명으로 검색하세요" value="" name="useName">
                              <div class="input-group-append">
-                                 <button type="submit" class="btn  btn-primary">
+                                 <!-- <button type="submit" class="btn  btn-primary">
                                      <i class="fa fa-search"></i>
-                                 </button>
+                                 </button> -->
                              </div>
                          </div>
                        </div>
                      </div>
-                   </form>
+                   <!-- </form> -->
 
                    </div><!--searchUser 끝-->
 
@@ -602,18 +605,18 @@
                                                 <th class="table-active dayoff-table-title">휴가종류</th>
                                                 <td>
                                                   <select class="form-control" id="dayoff-table-type">
-                                                    <option value="">오전반차</option>
-                                                    <option value="">오후반차</option>
-                                                    <option value="">연차</option>
+                                                    <option value="02">오전반차</option>
+                                                    <option value="03">오후반차</option>
+                                                    <option value="01">연차</option>
                                                   </select>
                                                 </td>
                                               </tr>
                                               <tr>
                                                 <th class="table-active dayoff-table-title">휴가일자</th>
                                                 <td>
-                                                  <input type="date" name="startDate" id="startDate" class="form-control date">        
+                                                  <input type="date" name="startDay" id="startDate" class="form-control date">        
                                                   <span style="margin: 0px 50px 0px 50px; font-weight: bold;">~</span>
-                                                  <input type="date" name="endDate" id="endDate" class="form-control date">
+                                                  <input type="date" name="endDay" id="endDate" class="form-control date">
                                                 </td>
                                                 <tr>
                                                   <th class="table-active dayoff-table-title">휴가사유</th>
@@ -643,7 +646,7 @@
     	    .remove() 
     	    .end() 
     	    .find('.userId')
-    	    .attr('name', 'edocHistList[0].userId') 
+    	    .attr('name', 'edocHistList[1].userId') 
     	    .css('display', 'none') 
     	    .end() 
     	    .html(); 
@@ -655,7 +658,7 @@
     	var approvalName2Html = $('.approvalName2')
         .clone() 
         .find('.userId')
-        .attr('name', 'edocHistList[1].userId') 
+        .attr('name', 'edocHistList[2].userId') 
         .css('display', 'none') 
         .end() 
         .find('input[type="checkbox"]') 

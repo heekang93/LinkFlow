@@ -74,10 +74,19 @@ public class MemberDao {
 	public int selectRetireMember(String date) {
 		return sql.selectOne("memberMapper.selectRetireMember", date);
 	}
+	// 팀별 인원 조회용 - 황민우
+	public List<MemberDto> selectTeamMember(String title){
+		return sql.selectList("memberMapper.selectTeamMember", title);
+	}
 	
 	// 카테고리마스터 조회용 - 구성모
 	public MemberDto selectCategoryMaster(String boardType) {
 		return sql.selectOne("memberMapper.selectCategoryMaster", boardType);
+	}
+	
+	// 메일수신때 유저있는지 체크용 - 구성모
+	public int selectCheckUser(String[] email) {
+		return sql.selectOne("memberMapper.selectCheckUser", email);
 	}
 
 

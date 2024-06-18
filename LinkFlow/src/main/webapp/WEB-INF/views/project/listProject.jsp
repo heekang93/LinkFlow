@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Linkflow 프로젝트목록조회</title>
 <!-- 네이버 지도 api -->
 <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=wfsx6d3wj7&submodules=geocoder"></script>
 <style>
@@ -43,7 +43,6 @@
 	<div class="wrapper">
 		<jsp:include page="/WEB-INF/views/common/header.jsp"/>
 		<div class="LinkFlowMainSection">
-            
 			<jsp:include page="/WEB-INF/views/common/sidebar/project/projectSidebar.jsp"/>
 
             <div class="LinkFlowMainContent">
@@ -69,7 +68,7 @@
                                     -->
                                 </div>
                                 <div class="form-inline" style="display: flex; flex-direction: column;">
-                                	<form action="${contextPath}/project/search.pj" method="get" id="searchForm">
+                                	<form action="${contextPath}/project/search.pj" method="post" id="searchForm">
                                 		<input name="page" type="hidden" value="1">
 		                                <div style="margin-bottom: 10px;">
 		                                    <input class="form-control form-control-sidebar" name="startDate" type="date" style="width: 150px;" value="${search.startDate}">&nbsp;&nbsp; ~ &nbsp;&nbsp;<input class="form-control form-control-sidebar" name="endDate" type="date" value="${search.endDate}">
@@ -112,7 +111,7 @@
                                                     <td>${p.proNo}</td>
                                                     <td>${p.client}</td>
                                                     <td>
-                                                        <a href="${contextPath}/project/detail.pj?no=${p.proNo}">${p.proTitle}</a>
+                                                        <a href="${contextPath}/project/detail.pj?no=${p.proNo}&title=${loginUser.deptName}">${p.proTitle}</a>
                                                     </td>
                                                     <td>${p.deptName}</td>
                                                     <td>${p.startDate} ~ ${p.endDate}</td>
@@ -171,28 +170,27 @@
         </div>
 	</div>
 	<c:if test="${ not empty search }">
-	<script>
-		$(document).ready(function () {
-			
-	        $("#searchForm select").val("${search.category}");
-			
-	        $("#pagingArea a").on("click", function(){
-     			$("#searchForm input[name=page]").val($(this).text());
-     			$("#searchForm").submit();
-     			//location.href = '${contextPath}/project/search.pj?category=${search.category}&keyword=${search.keyword}&page=' + $(this).text();
-     			return false;
-	   		});
-		});
-	</script>
+		<script>
+			$(document).ready(function () {
+		        $("#searchForm select").val("${search.category}");
+				
+		        $("#pagingArea a").on("click", function(){
+		        	if($(this).text() == "«"){
+		     			$("#searchForm input[name=page]").val(${pi.currentPage - 1});
+		        	}else if($(this).text() == "»"){
+		     			$("#searchForm input[name=page]").val(${pi.currentPage + 1});
+		        	}else{
+		     			$("#searchForm input[name=page]").val($(this).text());
+		        	}
+	     			$("#searchForm").submit();
+	     			return false;
+		   		});
+			});
+		</script>
 	</c:if>
 	<script>
-        $(document).ready(function () {
-            $('.dropdown-item').click(function () {
-                var selectedText = $(this).find('.spanCss').text();
-                $('.resultArea').text(selectedText);
-            });
-        });
-        // 지도 api 시작
+
+		// 지도 api 시작
         //주소의 정보를 selectMapList 함수로 넘겨준다.
         function mapCreate(address){
         naver.maps.Service.geocode({

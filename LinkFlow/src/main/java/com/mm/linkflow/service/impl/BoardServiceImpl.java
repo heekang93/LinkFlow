@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import com.mm.linkflow.dao.AttachDao;
 import com.mm.linkflow.dao.BoardDao;
@@ -72,14 +74,13 @@ public class BoardServiceImpl implements BoardService {
 		int result2 = 1;
 		List<AttachDto> attachList = board.getAttachList();
 		log.debug("attachList : {}", attachList);
-		if(!attachList.isEmpty()) {
+		ObjectUtils.isEmpty(attachList);
+		if(!ObjectUtils.isEmpty(attachList)) {
 			result2 = 0;
 			for(AttachDto at : attachList) {
 				result2 += attachDao.insertAttach(at);
 			}
 		}
-		log.debug("result1 : {}", result1);
-		log.debug("result2 : {}", result2);
 		return result1 * result2;
 	}
 
@@ -96,28 +97,24 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int updateBoard(BoardDto board, String[] delFileNo) {
 		
-		// 게시글 정보 update
-				int result1 = boardDao.updateBoard(board);
-				
-				// 삭제할 첨부파일 정보 delete
-				int result2 = delFileNo == null ? 1
-												: attachDao.deleteAttach(delFileNo);
-				
-				// 새로운 첨부파일 정보 insert
-				List<AttachDto> list = board.getAttachList();
-				int result3 = 0;
-				if(list != null) {
-					for(AttachDto at : list) {
-						result3 += attachDao.insertAttach(at);
-					}
-				}else {
-					list = new ArrayList<>();
-				}
-				
-				return result1 == 1
-						&& result2 > 0
-							&& result3 == list.size() 
-								? 1 : -1 ;
+		int result1 = boardDao.updateBoard(board);
+		int result2 = delFileNo == null ? 1
+										: attachDao.deleteAttach(delFileNo);
+		
+		List<AttachDto> list = board.getAttachList();
+		int result3 = 0;
+		if(list != null) {
+			for(AttachDto at : list) {
+				result3 += attachDao.insertAttach(at);
+			}
+		}else {
+			list = new ArrayList<>();
+		}
+		
+		return result1 == 1
+				&& result2 > 0
+					&& result3 == list.size() 
+						? 1 : -1 ;
 	}
 
 	@Override
@@ -155,15 +152,21 @@ public class BoardServiceImpl implements BoardService {
 		int result2 = 1;
 		int result3 = 1;
 		for(int index : no) {
-			List<String> delFileNo = attachDao.selectDelFileNo(index); 
-			if(delFileNo != null) {
+			List<String> delFileNo = attachDao.selectDelBoardFileNo(index);
+			
+			if(!ObjectUtils.isEmpty(delFileNo)) {
 				result2 = 0;
 				
 				String[] delFileNoArray = new String[delFileNo.size()];
 				delFileNo.toArray(delFileNoArray);
-				List<AttachDto> delFileList = attachDao.selectDelFileList(delFileNoArray);
-				result2 += attachDao.deleteAttach(delFileNoArray);	
 				
+				for(int i=0; i<delFileNoArray.length; i++) {
+					log.debug("delFileNoArray[{}] : {}", i, delFileNoArray[i]);
+				}
+				
+				result2 = attachDao.deleteAttach(delFileNoArray);	
+				
+				List<AttachDto> delFileList = attachDao.selectDelFileList(delFileNoArray);
 				for(AttachDto at : delFileList) {
 					new File(at.getFilePath() + "/" + at.getFilesystemName()).delete();
 				}

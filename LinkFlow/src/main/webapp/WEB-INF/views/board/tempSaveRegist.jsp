@@ -6,12 +6,33 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Linkflow 게시판</title>
 <script src="${ contextPath}/resources/ckeditor5/board/build/ckeditor.js"></script>
 <style>
+.wrapper{
+ min-height: 100%;
+ width: 100%;
+}
+.LinkFlowMainSection{
+    width: 100%;
+    min-height: 1500px;
+   
+    display: flex;
+}
+.LinkFlowMainContent{
+    width: 100%;
+    min-width: 1260px;
+    background-color: #f4f6f9;
+    min-height: 400px;
+    padding: 30px;
+}
+.contentArea{ 
+ width: 100%;
+}
+.contentInElement{display: flex; justify-content: space-between; margin-bottom: 30px;}
 	.LinkFlowMainContent section{
-    padding-left: 8%;
-    padding-right: 8%;
+    padding-left: 4%;
+    padding-right: 4%;
   }
   .registTitle{
     padding-right: 10px; 
@@ -86,7 +107,7 @@
                                 <div class="btnArea">
                                     <button type="submit" class="btn btn-primary btn-sm" style="margin-right: 6px;" id="enrollForm-submit">작성하기</button>
                                     <button type="button" class="btn btn-primary btn-sm" style="margin-right: 6px;" onclick="tempUpdate();">임시저장</button>
-                                    <button class="btn btn-primary btn-sm" onclick="javascript:history.go(-1);">취소</button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="javascript:history.go(-1);">취소</button>
                                 </div>
                             </div>
                             <div style="min-height: 500px; min-width: 100%;">
@@ -97,17 +118,10 @@
                                             <select id="select" class="custom-select" name="boardCategory" style="width: 200px;">
                                                 <c:if test="${loginUser.superRight == 'Y' or loginUser.boardRight == 'Y' }">
                                                     <option value="CATEGORY-8">사내공지</option>
-                                                <c:forEach var="c" items="${categoryList}">
-                                                	<c:choose>
-	                                                  <c:when test="${ board.boardCategory == c.boardCategory }">
-	                                                    <option value="${c.boardCategory }" selected="selected" >${c.categoryName }게시판</option>
-	                                                  </c:when>
-	                                                  <c:otherwise>
-	                                                  	<option value="${c.boardCategory }">${c.categoryName }게시판</option>
-	                                                  </c:otherwise>
-                                                  </c:choose>
+                                                </c:if>
+                                                <c:forEach var="w" items="${writeList}">
+                                                    <option value="${w.boardCategory }" <c:if test="${ board.boardCategory == w.boardCategory }">selected="selected"</c:if> >${w.categoryName }게시판</option>
                                                 </c:forEach>
-                                               </c:if>
                                             </select>
                                         </td>
                                     </tr>

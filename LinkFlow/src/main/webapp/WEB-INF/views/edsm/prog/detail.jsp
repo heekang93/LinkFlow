@@ -155,13 +155,21 @@
       margin-bottom: 30px;
     }
 	
-	.docContentArea{margin: 40px 0px 40px 20px !important;}
+	.docContentArea{ padding: 25px 10px 25px 10px; border: 2px solid lightgray; margin: 40px 0px 40px 20px !important; }
+	.docContentArea > .table { display: flex; flex-direction: column; align-items: center; }
+	.docContentArea > h1 { margin: 30px; text-align: center !important; } 
+	.ck-table-resized { min-width: 1500px; }
+	
     /* 인쇄  */
     @media print {
       .LinkFlowSidebar, .btnArea, .draft-inquiry > h6, .document-header, .sign-img-area button, .security-level, .attachment-content > svg{
           display: none;
         }
     }
+    
+    .edHistCommentArea { margin-left: 10px; font-weight: bold; font-size: 19px;}
+    
+    .document-comment-content{ height: auto; }
 </style>
 </head>
 <body>
@@ -187,9 +195,13 @@
 
                <div class="contentInElement">
                	<div class="btnArea">
-                 <button class="btn btn-primary btn-sm">수정</button>
+               	<c:forEach var="edocHist" items="${edoc.docHistList}">
+               	<c:if test="${edocHist.userId == loginUser.userId}">
+                 <!-- <button class="btn btn-primary btn-sm" onclick="modifySecCode();">수정</button> -->
+                 <!-- <button class="btn btn-danger btn-sm" onclick="modifyDelYn();">기안취소</button> -->
+               	</c:if>
+               	</c:forEach>
                  <button class="btn btn-info btn-sm" onclick="docPrint();">인쇄</button>
-                 <button class="btn btn-danger btn-sm">기안취소</button>
                </div>
                
              <!-- 기본 설정-->
@@ -229,16 +241,17 @@
                      </td>
                      <th class="table-active">보안 등급</th>
                      <td>
-                       <select class="form-control security-level">
+                     	 ${edoc.secCode}등급
+                       <%-- <select name="secCode" id="selectedSecCode" class="form-control security-level">
                          <option value="S" <c:if test="${edoc.secCode == 'S'}">selected</c:if>>S등급</option>
                          <option value="A" <c:if test="${edoc.secCode == 'A'}">selected</c:if>>A등급</option>
                          <option value="B" <c:if test="${edoc.secCode == 'B'}">selected</c:if>>B등급</option>
                          <option value="C" <c:if test="${edoc.secCode == 'C'}">selected</c:if>>C등급</option>
-                     </select>
+                     </select> --%>
 
-                     <div class="hidden-on-print-securityLevel">
+                     <!-- <div class="hidden-on-print-securityLevel">
                        <span id="selectedSecurityLevel"></span>
-                     </div>
+                     </div> -->
                      </td>
                    </tr>
                  </tbody>
@@ -257,14 +270,38 @@
 	                <c:forEach var="edocHist" items="${edoc.docHistList}">
 		                 <c:choose>
 		                 	<c:when test="${edocHist.edHistSubCode != null}">
-		                 		<td class="sign-img-area">
+		                 		<%-- <td class="sign-img-area">
 			                     <img src="${contextPath}<c:out value='${edocHist.signUrl}'/>" style="width: 150px; height: 150px;">
-			                   </td>
+			                   </td> --%>
+			                   
+			                   <c:choose>
+			                   	<c:when test="${edocHist.edHistSubCode == '01'}">
+			                   		<td class="sign-img-area">
+			                     		<c:choose>
+			                     			<c:when test="${edocHist.signUrl == null}">
+			                     				<img src="${contextPath}/resources/images/common/default_sign_approval.png" style="width: 150px; height: 150px;">
+			                     			</c:when>
+			                     			<c:otherwise>
+					                     		<img src="${contextPath}<c:out value='${edocHist.signUrl}'/>" style="width: 150px; height: 150px;">
+			                     			</c:otherwise>
+			                     		</c:choose>
+			                   		</td>
+			                   	</c:when>
+			                   	
+			                   	<c:otherwise>
+			                   		<td class="sign-img-area">
+			                     		<img src="${contextPath}/resources/images/common/default_sign_cancel.png" style="width: 150px; height: 150px;">
+			                   		</td>
+			                   	</c:otherwise>
+			                   </c:choose>
+			                   
 		                 	</c:when>
 		                 	
 		                 	<c:otherwise>
-			                	<td class="sign-img-area">		                   		
+			                	<td class="sign-img-area">	
+			                		<c:if test="${edocHist.userId == loginUser.userId}">	                   		
 				                     <button class="btn btn-primary" data-toggle="modal" data-target="#approvalModal">결재</button>
+				                 	</c:if>
 				                 </td>
 		                 	</c:otherwise>
 		                 	
@@ -318,6 +355,7 @@
 
            <!-- 결재 모달 -->
            <!-- The Modal -->
+           <form action="${contextPath}/edsm/prog/approval.prog" method="post">
            <div class="modal" id="approvalModal">
              <div class="modal-dialog modal-lg">
                <div class="modal-content">
@@ -332,13 +370,14 @@
                  <div class="modal-body">
                    <div class="approval-enable">
                      <div class="form-check form-check-radio">
-                       <input class="form-check-input" type="radio" name="radio=approval-radio" id="radio-approve1">
+                     	 <input type="hidden" name="edNo" value="${edoc.edNo}">
+                       <input class="form-check-input" type="radio" name="edHistSubCode" value="01" id="radio-approve1" checked>
                        <label class="form-check-label" for="radio-approve1">
                          승인
                        </label>
                      </div>
                      <div class="form-check form-check-radio">
-                       <input class="form-check-input" type="radio" name="radio=approval-radio" id="radio-approve2" checked>
+                       <input class="form-check-input" type="radio" name="edHistSubCode" value="02" id="radio-approve2">
                        <label class="form-check-label" for="radio-approve2">
                          반려
                        </label>
@@ -348,22 +387,20 @@
                    <div class="approval-enable-comment">
                      <div class="approval-enable-comment-header">
                        <b>승인 / 반려 의견</b><br>
-                       <textarea name="" id="" class="form-control" cols="30" rows="10" style="resize: none;" placeholder="의견 입력">
-                         
-                       </textarea>
+                       <textarea name="edHistComment" id="" class="form-control" cols="30" rows="10" style="resize: none;" placeholder="의견 입력" required="required"></textarea>
                      </div>
                    </div>
                  </div>
 
                  <!-- Modal footer -->
                  <div class="modal-footer d-flex justify-content-center">
-                   <button type="button" class="btn btn-primary">확인</button>
+                   <button type="submit" class="btn btn-primary">확인</button>
                  </div>
 
                </div>
              </div>
            </div>
-
+				 </form>
 
            <!-- 제목 -->
            <div class="document-title" style="margin-bottom: 25px;">
@@ -391,7 +428,7 @@
              </script> -->
              <hr>
 						
-						<c:if test="${edoc.attachList != null}">
+						<%-- <c:if test="${edoc.attachList != null}">
 							<c:forEach var="at" items="${edoc.attachList}">
 		             <div class="attachment">
 		               <div class="attachment-title" style="margin-bottom: 10px;">
@@ -407,7 +444,7 @@
 		               </div>
 		             </div>
 	             </c:forEach>
-             </c:if>
+             </c:if> --%>
              
              <div class="document-comment">
                <div class="document-comment-title">
@@ -418,8 +455,21 @@
                  	<c:if test="${edocHist.edHistSubCode != null}">
 		                 <div>
 		                   <span class="document-approval-user-name">${edocHist.userName}</span>
-		                   <span>결재</span>
-		                   <hr>
+		                   <c:choose>
+		                   	<c:when test="${edocHist.edHistSubCode == '01'}">
+		                   		<span>결재</span>
+		                   	</c:when>
+		                   	<c:otherwise>		                   	
+		                   		<span>반려</span>
+		                   	</c:otherwise>
+		                   </c:choose>
+		                   <c:choose>
+		                   	<c:when test="${edocHist.edHistComment != null}">
+		                   		<br><br>
+		                   		<span class="edHistCommentArea">의견 : ${edocHist.edHistComment}</span>
+		                   	</c:when>
+		                   </c:choose>
+			                 <hr>
 		                 </div>
 	                 </c:if>
                 </c:forEach>
@@ -439,7 +489,17 @@
 	</div>
 	
 	<script>
-
+				
+				// 보안등급 수정
+				function modifySecCode(){
+					location.href = '${contextPath}/edsm/prog/modifySecCode.prog?edNo=' + '${edoc.edNo}' + '&secCode=' + $('#selectedSecCode').val();
+					
+				};
+				
+				function modifyDelYn(){
+					location.href = '${contextPath}/edsm/prog/modifyDelYn.prog?edNo=' + '${edoc.edNo}';	
+				};
+				
         // 인쇄
         function docPrint(){
           /*let initBody = document.body.innerHTML;

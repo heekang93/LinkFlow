@@ -43,7 +43,11 @@ public interface MemberService {
 	   int selectHireMember(String date);
 	   // 퇴사자 조회용 - 황민우
 	   int selectRetireMember(String date);
+	   // 팀별 인원 조회용 - 황민우
+	   List<MemberDto> selectTeamMember(String title);
 
 	   // 카테고리마스터조회용 - 구성모
 	   MemberDto selectCategoryMaster(String boardType);
+	   // 메일수신할때 유저있는지 체크용 - 구성모
+	   int selectCheckUser(String[] email);
 }

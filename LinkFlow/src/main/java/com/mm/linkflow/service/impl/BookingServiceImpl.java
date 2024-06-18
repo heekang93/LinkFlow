@@ -1,5 +1,6 @@
 package com.mm.linkflow.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,13 +121,8 @@ public class BookingServiceImpl implements BookingService {
 	}
 
 	@Override
-	public int insertBooking(BookingDto bk) {
-		return 0;
-	}
-
-	@Override
-	public int modBooking(BookingDto bk) {
-		return 0;
+	public int insertBooking(Map<String,String> bk) {
+		return bkDao.insertBooking(bk);
 	}
 
 	@Override
@@ -141,13 +137,55 @@ public class BookingServiceImpl implements BookingService {
 
 	@Override
 	public int selectSupStatusCount(Map<String, String> search) {
-		return 0;
+		return bkDao.selectSupStatusCount(search);
 	}
 
 	@Override
-	public List<BookingDto> selectSipStatusList(PageInfoDto pi, Map<String, String> search) {
-		return null;
+	public List<BookingDto> selectSupStatusList(PageInfoDto pi, Map<String, String> search) {
+		return bkDao.selectSupStatusList(search,pi);
 	}
+
+	@Override
+	public int updateSupBkConfirm(Map<String, String> bk) {
+		return bkDao.updateSupBkConfirm(bk);
+	}
+
+	@Override
+	public int updateSupBkReturn(Map<String, String> bk) {
+		return bkDao.updateSupBkReturn(bk);
+	}
+
+	@Override
+	public List<AssetsDto> modalSetDtoList() {
+		return bkDao.modalSetDtoList();
+	}
+
+	@Override
+	public List<BookingDto> selectRoomWaitList() {
+		return bkDao.selectRoomWaitList();
+	}
+
+	@Override
+	public int updateRoomBooking(Map<String, String> bk) {
+		return bkDao.updateRoomBooking(bk);
+	}
+
+	@Override
+	public List<BookingDto> selectRoomBooking(Map<String,Object> rooms) {
+		return bkDao.selectRoomBooking(rooms);
+	}
+
+	@Override
+	public int autoRoomBkEnd() {
+		return bkDao.autoRoomBkEnd();
+	}
+
+	@Override
+	public int autoCarBkUse() {
+		return bkDao.autoCarBkUse();
+	}
+	
+	
 
 	
 	

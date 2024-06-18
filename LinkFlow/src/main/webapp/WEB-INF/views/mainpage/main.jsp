@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Linkflow 메인페이지</title>
 <!-- fullCalendar -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.11/index.global.min.js'></script>
@@ -148,7 +148,7 @@
 					<div class="menuBar">
 						<span style="margin-left: 150px;"></span> 
 						<span class="menubar_category"> 
-							<a href="" class="category_link">
+							<a href="${ contextPath }/mail/receiveList.do" class="category_link">
 								<i class="fa-regular fa-envelope" style="font-size: 43px; padding-left: 11px; padding-top: 10px;"></i>
 								<p class="category_content" style="padding-left: 13.5px; padding-top: 25px;">메일</p>
 							</a>
@@ -228,21 +228,16 @@
 	
 						<!-- 전자결재 시작 -->
 						<div class="divisionOne_one">
-							<h4>전자결재</h4>
-							<div class="division card" style="width: 400px; height: 150px;">
-								<div
-									style="width: 90%; height: 90%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-									<div style="margin-bottom: 10px;">
-										<a class="btn btn-outline-secondary" href="${ contextPath }/edsm/prog/listWait.prog">대기</a> 
-										<a class="btn btn-outline-secondary" href="${ contextPath }/edsm/prog/listCheck.prog">확인</a>
-									</div>
-									<div>
-										<a class="btn btn-outline-secondary" href="${ contextPath }/edsm/prog/listPlan.prog">예정</a> 
-										<a class="btn btn-outline-secondary" href="${ contextPath }/edsm/prog/listProg.prog">진행</a>
-									</div>
-								</div>
-							</div>
-						</div>
+                            <h4>전자결재</h4>
+                            <div class="division card" style="width: 400px; height: 150px;"> 
+                                <div style="width: 90%; height: 90%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                    <div style="display: flex; align-items: center; justify-content: center;">
+                                        <a href="${ contextPath }/edsm/prog/listAll.prog" class="btn btn-outline-secondary" style="margin-right: 5px; width: 200px; height: 60px; display: flex; align-items: center; justify-content: center;">진행 중인 문서</a>
+                                        <a href="${ contextPath }/edsm/docbox/listAll.docbox" class="btn btn-outline-secondary" style="height: 60px; display: flex; align-items: center; justify-content: center;">문서함</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 						<!-- 전자결재 끝 -->
 					</div>
 					<!-- 일정 시작 -->
@@ -285,7 +280,7 @@
 				<c:if test="${ loginUser.superRight == 'Y' || loginUser.hrRight == 'Y' }">
 				<!-- 사원현황 시작 -->
 				<!-- 여기는 슈퍼관리자 / 인사담당자로 로그인시에만 표시 -->
-				<div class="mainContent_chart card">
+				<div class="mainContent_chart card" style="margin-bottom: 200px">
 					<div style="border-right: 1px solid black; width: 70%;">
 						<h4>사원 현황</h4>
 			    	<div class="division">
@@ -394,6 +389,9 @@
 	                    start: '', 
 	                    center: '',
 	                    end: ''
+	                },
+	                eventClick: function(info) {
+	               		info.jsEvent.preventDefault(); 
 	                }
 	            
 	            });
@@ -461,7 +459,7 @@
 	                    }
 	                },
 	                data: ['${sixMonthMember - sixMonthRetire}', '${fiveMonthMember - fiveMonthRetire}', '${fourMonthMember - fourMonthRetire}', 
-	                	   '${threeMonthMember - fourMonthRetire}', '${twoMonthMember - twoMonthRetire}', '${oneMonthMember - oneMonthRetire}']
+	                	   '${threeMonthMember - threeMonthRetire}', '${twoMonthMember - twoMonthRetire}', '${oneMonthMember - oneMonthRetire}']
 	                },
 	                {
 	                name: '입사자',

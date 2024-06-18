@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>my booking list</title>
+<title>Linkflow 시설/비품</title>
 
 <style>
 
@@ -76,13 +76,13 @@ input[type="checkbox"]:checked {
 					<div class="card">
 						<div class="card-header">
 							<h6 class="card-title">
-									<input type="checkbox" id="roomCheckbox" name="room" onchange="search(); checkYN();"> 시설 &nbsp;
-									 <input type="checkbox" id="supCheckbox" name="supplies" onchange="search(); checkYN();"> 비품
+									<input type="checkbox" id="roomCheckbox" name="room" onchange="searchMyList(1); checkYN();"> 시설 &nbsp;
+									 <input type="checkbox" id="supCheckbox" name="supplies" onchange="searchMyList(1); checkYN();"> 비품
 								</h6>
 
 							<div class="card-tools">
 								<div class="input-group input-group-sm" style="width: 120px;">
-									<select id="status" name="status" class="form-control" onchange="search();">
+									<select id="status" name="status" class="form-control" onchange="searchMyList(1);">
 										<option value="ALL">전체</option>
 										<option value="WAI">예약대기</option>
 										<option value="COM">예약완료</option>
@@ -124,7 +124,14 @@ input[type="checkbox"]:checked {
 											<td>${ bk.subName }</td>
 											<td>${ bk.assetsName }</td>
 											<td>${ bk.bkStartDate }</td>
-											<td>${ bk.bkStartTime } ~ ${ bk.bkEndTime }</td>
+											<c:choose>
+											<c:when test="${ bk.subName eq '차량' }">
+												<td> ~ </td>
+											</c:when>
+											<c:otherwise>
+												<td>${ bk.bkStartTime } ~ ${ bk.bkEndTime }</td>
+											</c:otherwise>
+											</c:choose>
 											<td>${ bk.status }</td>
 										</tr>
 									</c:forEach>
@@ -167,7 +174,7 @@ input[type="checkbox"]:checked {
 	    }
 
 	    // 검색 실행 함수
-	    function search() {
+	    function searchMyList(no) {
 	        let { room, supplies } = checkYN(); // checkYN()으로부터 값을 가져옴
 	        let status = document.getElementById('status').value;
 
@@ -177,7 +184,8 @@ input[type="checkbox"]:checked {
 				data:{
 					room: room,
 					supplies: supplies,
-					status: status
+					status: status,
+					page:no
 				},success:function(result){
 					let table ="";
 					let page = "";
@@ -191,17 +199,21 @@ input[type="checkbox"]:checked {
 							table +="<td>"+ list[i].subName +"</td>";
 							table +="<td>"+ list[i].assetsName+"</td>";
 							table +="<td>"+ list[i].bkStartDate +"</td>";
-							table +="<td>"+ list[i].bkStartTime +" ~ "+ list[i].bkEndTime +"</td>";
+							if(list[i].subName === '차량'){
+								table += "<td> ~ </td>";
+							}else{
+								table +="<td>"+ list[i].bkStartTime +" ~ "+ list[i].bkEndTime +"</td>";
+							}
 							table +="<td>"+ list[i].status +"</th></tr>";
 						}
 					  	
-						page += "<li class=\"page-item " + (pi.currentPage == 1 ? 'disabled' : '') + "\"><a class=\"page-link\" href=\"${contextPath}/booking/mylist.search?page=" + (pi.currentPage - 1) + "\">&laquo;</a></li>";
+						page += "<li class=\"page-item " + (pi.currentPage == 1 ? 'disabled' : '') + "\"><a class=\"page-link\" onclick=\"searchMyList(" + (pi.currentPage - 1) + ");\">&laquo;</a></li>";
 
 						for (let i = pi.startPage; i <= pi.endPage; i++) {
-						    page += "<li class=\"page-item " + (pi.currentPage == i ? 'disabled' : '') + "\"><a class=\"page-link\" href=\"${contextPath}/booking/mylist.search?page=" + i + "\">" + i + "</a></li>";
+						    page += "<li class=\"page-item " + (pi.currentPage == i ? 'disabled' : '') + "\"><a class=\"page-link\" onclick=\"searchMyList(" + i + ");\">" + i + "</a></li>";
 						}
 
-						page += "<li class=\"page-item " + (pi.currentPage == pi.maxPage ? 'disabled' : '') + "\"><a class=\"page-link\" href=\"${contextPath}/booking/mylist.search?page=" + (pi.currentPage + 1) + "\">&raquo;</a></li>";
+						page += "<li class=\"page-item " + (pi.currentPage == pi.maxPage ? 'disabled' : '') + "\"><a class=\"page-link\" onclick=\"searchMyList(" + (pi.currentPage + 1) + ");\">&raquo;</a></li>";
 					}
 					
 					$("#roomCheckbox").prop("checked",result.search.room == 'Y' ? true: false);
@@ -215,15 +227,11 @@ input[type="checkbox"]:checked {
 				
 			})
 		}
-		
-		$(document).ready(function(){
-            /* search(); */
-        });
-		
 		 $(document).ready(function() {
 		 	$('#roomCheckbox, #supCheckbox, #status').change(function() {
-		    	search(); // 변경 사항이 감지되면 검색 실행
+		 		searchMyList(1); // 변경 사항이 감지되면 검색 실행
 		    });
+		 	
 	    });
 		</script>
 	

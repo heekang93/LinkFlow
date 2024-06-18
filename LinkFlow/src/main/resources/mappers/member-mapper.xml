@@ -271,6 +271,17 @@
  		       COUNT(*)
  		  FROM TB_MEMBER
  		 WHERE TO_CHAR(RETIRE_DATE, 'YYYY-MM') = #{date}
+ 		   AND DEL_YN = 'Y'
+ 	</select>
+ 	<!-- 팀별 인원 조회용 - 황민우 -->
+ 	<select id="selectTeamMember" resultMap="memberResult">
+ 		SELECT
+ 		       USER_ID
+ 		     , USER_NAME
+ 		  FROM TB_MEMBER M
+ 		  JOIN TB_DEPT USING (DEPT_CODE)
+ 		 WHERE M.DEL_YN = 'N'
+ 		   AND DEPT_TITLE = #{title}
  	</select>
  	
  	<!-- 게시판 마스터 조회용 - 구성모 -->
@@ -286,5 +297,18 @@
 		join tb_common c on (c.main_code = m.rank_bcode and c.sub_code = m.rank_scode)
 		where board_category = #{boardType}
  	</select>
+ 	
+ 	<!-- 메일수신할때 유저있는지 체크용 - 구성모 -->
+ 	<select id="selectCheckUser" resultType="_int">
+  	select
+  				 count(*)
+  	from tb_member
+   <where>
+   	<foreach item="item" collection="array"
+   					 open="user_id in (" separator="," close=")">
+   		#{item}
+   	</foreach>
+   </where>
+  </select>
  	
 </mapper>

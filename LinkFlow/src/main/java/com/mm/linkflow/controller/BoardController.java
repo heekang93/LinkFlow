@@ -7,14 +7,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -144,7 +150,7 @@ public class BoardController {
 		}
 
 		int result = boardService.insertBoard(board);
-		
+		log.debug("attachList : {}", attachList);
 		if(attachList.isEmpty() && result == 1 || !attachList.isEmpty() && result == attachList.size()) {
 			redirectAttributes.addFlashAttribute("alertMsg", "게시글 작성에 성공하였습니다.");
 		}else {
@@ -172,9 +178,12 @@ public class BoardController {
 	@GetMapping("/modifyForm.page")
 	public String modifyForm(int no, Model model, HttpSession session) {
 		List<BoardCategoryDto> categoryList = selectBoardCategory(session);
+		MemberDto loginUser = (MemberDto)session.getAttribute("loginUser");
+		List<BoardCategoryDto> writeList = boardService.selectWriteCategory(loginUser);
 		model.addAttribute("categoryList", categoryList);
+		model.addAttribute("writeList", writeList);
 		model.addAttribute("board", boardService.selectBoard(no));
-		log.debug("list :{} ", boardService.selectBoard(no));
+
 		return "board/modify";
 	}
 	
@@ -190,7 +199,7 @@ public class BoardController {
 		
 		List<AttachDto> delFileList = attachService.selectDelFileList(delFileNo);
 		
-		if(board.getNoticeYN() == null) {
+		if(board.getNoticeYN() == null || !board.getNoticeYN().equals("Y")) {
 			if(board.getBoardCategory().equals("CATEGORY-8")) {
 				board.setNoticeYN("Y");
 			}
@@ -263,7 +272,7 @@ public class BoardController {
 		board.setModId(String.valueOf(loginUser.getUserId()));
 		board.setTempSave("01");
 		
-		if(board.getNoticeYN() == null) {
+		if(board.getNoticeYN() == null || !board.getNoticeYN().equals("Y")) {
 			if(board.getBoardCategory().equals("CATEGORY-8")) {
 				board.setNoticeYN("Y");
 			}
@@ -271,6 +280,7 @@ public class BoardController {
 				board.setNoticeYN("N");
 			}
 		}
+		log.debug("noticeYN : {}", board.getNoticeYN());
 
 		 List<AttachDto> attachList = new ArrayList<>(); 
 		 if(uploadFiles != null) {
@@ -284,11 +294,11 @@ public class BoardController {
 		 if(result > 0) {
 			 boardNo = boardService.selectCurrnetTempSave();
 		 }
-		 log.debug("boardNo : {}", boardNo);
+		 
 		 return boardNo;
 	}
 	
-	@GetMapping("/tempSave.page") // /board/detail.do?no=글번호
+	@GetMapping("/tempSave.page")
 	public String tempSaveForm(Model model, HttpSession session
 							, @RequestParam(value="page", defaultValue="1")int currentPage) { // 게시글 상세 조회용 (내가 작성한 게시글 클릭시 곧바로 호출 | 수정완료 후 곧바로 호출)
 		
@@ -308,10 +318,13 @@ public class BoardController {
 		return "board/tempSave";
 	}
 	
-	@GetMapping("/tempSaveDetail.page") // /board/detail.do?no=글번호
-	public String tempSaveDetail(int no, Model model, HttpSession session) { // 게시글 상세 조회용 (내가 작성한 게시글 클릭시 곧바로 호출 | 수정완료 후 곧바로 호출)
+	@GetMapping("/tempSaveDetail.page") 
+	public String tempSaveDetail(int no, Model model, HttpSession session) {
+		MemberDto loginUser = (MemberDto)session.getAttribute("loginUser");
 		List<BoardCategoryDto> categoryList = selectBoardCategory(session);
+		List<BoardCategoryDto> writeList = boardService.selectWriteCategory(loginUser);
 		model.addAttribute("categoryList", categoryList);
+		model.addAttribute("writeList", writeList);
 		model.addAttribute("board", boardService.selectBoard(no));
 		return "board/tempSaveRegist";
 	}
@@ -328,7 +341,7 @@ public class BoardController {
 		
 		List<AttachDto> delFileList = attachService.selectDelFileList(delFileNo);
 		
-		if(board.getNoticeYN() == null) {
+		if(board.getNoticeYN() == null || !board.getNoticeYN().equals("Y")) {
 			if(board.getBoardCategory().equals("CATEGORY-8")) {
 				board.setNoticeYN("Y");
 			}
@@ -575,4 +588,5 @@ public class BoardController {
 		
 		return boardService.updateReply(reply) > 0 ? "SUCCESS" : "FAIL";
 	}
+	
 }

@@ -28,6 +28,8 @@ public class BoardDto extends CommonDto {
 	private String boardType;
 	private String charDate;
 	private String categoryName;
+	private String userName;
+	private String position;
 	
 	private List<AttachDto> attachList;
 }

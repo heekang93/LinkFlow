@@ -1,5 +1,7 @@
 package com.mm.linkflow.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +25,6 @@ public class ScheduleDto extends CommonDto{
 	private String calColor;
 	private String schTitle;
 	private String schCalSubCode; 
-
+	private String modId; 
+	private List<String> shareIds;
 }

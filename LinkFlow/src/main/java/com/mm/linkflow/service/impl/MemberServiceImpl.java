@@ -23,7 +23,12 @@ public class MemberServiceImpl implements MemberService {
 	}
 	@Override
 	public int updateMember(MemberDto m) {
-		return mDao.updateMember(m);
+		
+		if(m.getProfileUrl() != null) {
+			return mDao.updateMember(m);
+		}else {
+			return mDao.updatInfoeMember(m);
+		}
 	}
 	
 	@Override
@@ -78,6 +83,14 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberDto selectCategoryMaster(String boardType) {
 		return mDao.selectCategoryMaster(boardType);
+	}
+	@Override
+	public int selectCheckUser(String[] email) {
+		return mDao.selectCheckUser(email);
+	}
+	@Override
+	public List<MemberDto> selectTeamMember(String title) {
+		return mDao.selectTeamMember(title);
 	}
 
 }
