@@ -146,19 +146,25 @@ public class EdsmProgController {
 
 		
 		
+		if(edocHistList != null) {
+			for(EdocHistDto EdocHistDto : edocHistList) {
+				
+				EdocHistDto.setModId(loginUser.getUserId());
+				EdocHistDto.setRegId(loginUser.getUserId());
+				EdocHistDto.setEdFormCode(edocDto.getEdFormCode());
+				
+			}
+		}
 		
-		for(EdocHistDto EdocHistDto : edocHistList) {
-			EdocHistDto.setModId(loginUser.getUserId());
-			EdocHistDto.setRegId(loginUser.getUserId());
-			EdocHistDto.setEdFormCode(edocDto.getEdFormCode());
-			
+		if(EdocRefList != null) {
+			for(EdocRefDto EdocRefDto : EdocRefList) {
+				EdocRefDto.setModId(loginUser.getUserId());
+				EdocRefDto.setRegId(loginUser.getUserId());
+				EdocRefDto.setEdFormCode(edocDto.getEdFormCode());
+				
+			}
 		}
-		for(EdocRefDto EdocRefDto : EdocRefList) {
-			EdocRefDto.setModId(loginUser.getUserId());
-			EdocRefDto.setRegId(loginUser.getUserId());
-			EdocRefDto.setEdFormCode(edocDto.getEdFormCode());
-			
-		}
+		
 		int result = edsmProgService.insertDoc(edocDto);
 		
 		if(result>0) {
